@@ -1,5 +1,7 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import re_path
+
+import views
 
 # create your urls here.
 
@@ -14,8 +16,8 @@ user urls :
     5. send forgot password code url
     6. verify forgot password sent code url
     7. change password url
-
 factor urls :
+
 
     1.  create factor url                                                            # customer
     2.  return list of user's factor url                                             # user
@@ -88,5 +90,20 @@ product urls :
 
 """
 
+My_app = 'InstaPay'
+
 urlpatterns = [
+
+
+    # Bloger Urls
+
+    re_path(r'^bloger/SignUp/', views.bloger_signup, name="Bloger_SignUp"),
+    re_path(r'^bloger/verify/', views.bloger_verify, name="Bloger_Verify"),
+    re_path(r'^bloger/verify/information/', views.bloger_verify_information, name="Bloger_Verify_Information"),
+    re_path(r'^bloger/edit/information/', views.bloger_edit_information, name="Bloger_Edit_Information"),
+    re_path(r'^bloger/forgot_password/', views.bloger_forgot_password, name="Bloger_Forgot_PassWord"),
+    re_path(r'^bloger/forgot_password/verify/', views.bloger_forgot_password_verify,
+            name="Bloger_Forgot_PassWord_Verify"),
+    re_path(r'^bloger/change_password/', views.bloger_change_password, name="Bloger_Change_PassWord"),
+
 ]
