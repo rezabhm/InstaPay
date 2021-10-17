@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import re_path
 
-import views
+from . import views
 
 # create your urls here.
 
@@ -98,6 +98,7 @@ urlpatterns = [
     # Bloger Urls
 
     re_path(r'^bloger/SignUp/', views.bloger_signup, name="Bloger_SignUp"),
+    re_path(r'^bloger/SignUp/Form/', views.bloger_signup_form, name="Bloger_SignUp_Form"),
     re_path(r'^bloger/verify/', views.bloger_verify, name="Bloger_Verify"),
     re_path(r'^bloger/verify/information/', views.bloger_verify_information, name="Bloger_Verify_Information"),
     re_path(r'^bloger/edit/information/', views.bloger_edit_information, name="Bloger_Edit_Information"),
