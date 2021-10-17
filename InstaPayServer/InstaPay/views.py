@@ -2,6 +2,7 @@ from django.shortcuts import HttpResponse, HttpResponseRedirect
 from django.template import loader, context
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 from . import models
 
@@ -68,7 +69,7 @@ def bloger_signup(requests):
             return bloger_signup_form(requests, "رمز عبور و رمز عبور تصدیقی برابر نیستند")
 
         # Check Phone number
-        if (len(str(phone_number)) !=  11) or (str(phone_number)[:2] != "09") :
+        if (len(str(phone_number)) != 11) or (str(phone_number)[:2] != "09"):
 
             # raised error because phone number format is false
             return bloger_signup_form(requests, "فرمت شماره موبایل نادرست است ")
@@ -84,6 +85,9 @@ def bloger_signup(requests):
         # create user
         bloger_user = User.objects.create_user(page_name, email, password)
         bloger_user.save()
+
+        # login user
+        login(requests, bloger_user)
 
         # create new bloger object
         bloger_obj = models.Bloger()
@@ -131,14 +135,6 @@ def bloger_signup_form(requests, error_text="کادر های خالی را بر 
         }
 
         return HttpResponse(login_form_page.render(context))
-
-
-def bloger_verify(requests):
-
-    """
-    Verify Bloger's account
-    """
-    pass
 
 
 def bloger_verify_information(requests):
