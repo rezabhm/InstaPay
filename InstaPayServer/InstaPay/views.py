@@ -1,9 +1,8 @@
-from django.shortcuts import HttpResponse, HttpResponseRedirect
-from django.template import loader, context
+from django.shortcuts import HttpResponse
+from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
-
+from django.contrib.auth import login, authenticate, logout
 from . import models
 
 import hashlib
@@ -17,6 +16,17 @@ import hashlib
 ####################################
 
 
+def main(requests):
+
+    """
+    render main page
+    """
+
+    main_page = loader.get_template("InstaPay/main.html")
+
+    return HttpResponse(main_page.render())
+
+
 @csrf_exempt
 def bloger_signup(requests):
 
@@ -27,9 +37,7 @@ def bloger_signup(requests):
     if requests.user.is_authenticated:
 
         # redirect to main page
-        main_page = loader.get_template("InstaPay/main.html")
-
-        return HttpResponse(main_page.render())
+        return main(requests)
 
     else:
 
@@ -121,14 +129,12 @@ def bloger_signup_form(requests, error_text="کادر های خالی را بر 
     if requests.user.is_authenticated:
 
         # redirect to main page
-        main_page = loader.get_template("InstaPay/main.html")
-
-        return HttpResponse(main_page.render())
+        return main(requests)
 
     else:
 
         # render form login form page
-        login_form_page = loader.get_template("InstaPay/Login_Form.html")
+        login_form_page = loader.get_template("InstaPay/SignUp_Form.html")
 
         context = {
             "error": error_text
@@ -142,15 +148,263 @@ def bloger_verify_information(requests):
     """
     Verify Bloger's information (phone_number, address, password, ...)
     """
-    pass
+
+    # this requests method is POST and contain to keys (param_name, value, page_name, password)
+    # param_name    :   it is one of the bloger's attribute that we want verify it
+    # value         :   it is attribute's value that w want verify it
+
+    param_name = requests.POST['param_name']
+    value = requests.POST["value"]
+    page_name = requests.POST["page_name"]
+
+    # we must get password's hash
+    password = requests.POST["password"]
+
+    # get bloger's object
+    bloger_list = models.Bloger.objects.all().filter(page_name=page_name)
+
+    if len(bloger_list) > 0:
+
+        bloger_obj = bloger_list[0]
+
+        if bloger_obj.bloger_password_hashcode == password:
+
+            # so we must verify data if it's correct we must return 1 else we must return 0
+
+            if bloger_obj.verify_param(param_name) == value:
+
+                # so our value verified
+                return HttpResponse("1")
+
+            else:
+
+                # value didn't verified
+                return HttpResponse("0")
+
+        else:
+
+            # this error mean's password is incorrect
+            return HttpResponse("-2")
+
+    else:
+
+        # this return means we didn't have this user
+        return HttpResponse("-1")
 
 
+def bloger_edit_information_form(requests, error_text="قادیر را بروز رسانی کنید"):
+
+    """
+    edit Bloger's information form
+    """
+
+    if requests.user.is_authenticated and not requests.user.is_superuser:
+
+        # render edit information form page
+        edit_info_form_page = loader.get_template("InstaPay/Edit_Information_Form.html")
+
+        page_name = requests.user.username
+        bloger_list = models.Bloger.objects.all().filter(page_name=page_name)
+
+        if len(bloger_list) > 0:
+
+            bloger_obj = bloger_list[0]
+
+            context = {
+
+                "error": error_text,
+                "name": bloger_obj.name,
+                "last_name": bloger_obj.last_name,
+                "page_name": bloger_obj.page_name,
+                "phone_number": bloger_obj.phone_number,
+                "address": bloger_obj.address,
+                "email": bloger_obj.bloger_email,
+                "national_code": bloger_obj.national_code,
+                "bank_name": bloger_obj.bank_name,
+                "bank_account_number": bloger_obj.bank_account_number,
+                "shaba": bloger_obj.shaba,
+                "password": bloger_obj.bloger_password_hashcode
+
+            }
+
+            return HttpResponse(edit_info_form_page.render(context))
+
+        else:
+
+            context = {
+
+                "error": "بلاگری با این مشخصات وجود ندارد"
+
+            }
+            return HttpResponse(edit_info_form_page.render(context))
+
+    else:
+
+        # redirect to main page
+        return main(requests)
+
+
+@csrf_exempt
 def bloger_edit_information(requests):
 
     """
     edit Bloger's information (phone_number, address, password, ...)
     """
-    pass
+
+    if requests.user.is_authenticated and not requests.user.is_superuser:
+
+        # edit information
+        # get information from requests
+        requests_info = requests.POST
+
+        # bloger information
+        name = requests_info["name"]
+        last_name = requests_info["last_name"]
+        page_name = requests_info["page_name"]
+        address = requests_info["address"]
+        phone_number = requests_info["phone_number"]
+        national_code = requests_info["national_code"]
+        shaba = requests_info["shaba"]
+        bank_account_number = requests_info["bank_account_number"]
+        bank_name = requests_info["bank_name"]
+        email = requests_info["email"]
+        password = requests_info["password"]
+
+        # here we will check some of above information and if them True we will edit data
+        # else we will raised Error and redirect to Edit page form
+
+        # Check Page Name
+        bloger_list = models.Bloger.objects.all().filter(page_name=page_name)
+
+        if len(bloger_list) != 1:
+
+            # redirect to signup form page because someone previously registered with this page name
+            return bloger_edit_information_form(requests, "نام بیج شما صحیح نمیباشد !!!")
+
+        # Check Phone number
+        if (len(str(phone_number)) != 11) or (str(phone_number)[:2] != "09"):
+
+            # raised error because phone number format is false
+            return bloger_signup_form(requests, "فرمت شماره موبایل نادرست است ")
+
+        # Check national code
+        if len(str(national_code)) != 10:
+
+            # raised error because of false format
+            return bloger_signup_form(requests, "کد ملی را اشتباه وارد کرده اید")
+
+        # after check above information in here we will edit information
+
+        # get bloger's object
+        user_name = requests.user.username
+        bloger_obj = models.Bloger.objects.all().filter(page_name=user_name)[0]
+
+        if bloger_obj.bloger_password_hashcode == password:
+
+            # set attribute
+            bloger_obj.name = name
+            bloger_obj.last_name = last_name
+            bloger_obj.page_name = page_name
+            bloger_obj.address = address
+            bloger_obj.phone_number = phone_number
+            bloger_obj.national_code = national_code
+            bloger_obj.bloger_email = email
+            bloger_obj.bank_name = bank_name
+            bloger_obj.bank_account_number = bank_account_number
+            bloger_obj.shaba = shaba
+            bloger_obj.bloger_hashcode = str(hash(page_name) % 10 ** 8)
+
+            # update user's user_name
+            new_user = requests.user
+            new_user.user_name = page_name
+            new_user.save()
+
+            # save bloger
+            bloger_obj.save()
+
+            return bloger_edit_information_form(requests, "مقادیر با موفقیت تغییر یافت")
+
+        else:
+
+            # if password is incorrect
+            return bloger_edit_information_form(requests, "رمز عبور اشتباه وارد شده است ")
+
+    else:
+
+        # redirect to main page
+        return main(requests)
+
+
+def bloger_login_form(requests, error_text="آدرس بیج و رمز عبور را وارد کنید"):
+
+    """
+    login form
+    """
+
+    if requests.user.is_authenticated:
+
+        # redirect to main page
+        return main(requests)
+
+    else:
+
+        # render login form page
+        login_form_page = loader.get_template("InstaPay/Login_Form.html")
+
+        context = {
+
+            "error": error_text
+
+        }
+
+        return HttpResponse(login_form_page.render(context))
+
+
+@csrf_exempt
+def bloger_login(requests):
+
+    """
+    Bloger login to it's account
+    """
+
+    if not requests.user.is_authenticated:
+
+        # login to account
+        user_name = requests.POST["page_name"]
+        password = requests.POST["password"]
+
+        # verify username and password
+        user_obj = authenticate(requests, username=user_name, password=password)
+
+        if user_obj:
+
+            # login
+            login(requests, user_obj)
+            return main(requests)
+
+        else:
+
+            # username or password is incorrect
+            return bloger_login_form(requests, "رمز عبور یا نام بیج اشتباه است")
+
+    else:
+
+        # user login previously and just redirect to main page
+        return main(requests)
+
+
+def bloger_logout(requests):
+
+    """
+    logout bloger
+    """
+
+    if requests.user.is_authenticated:
+
+        # logout
+        logout(requests)
+
+    return main(requests)
 
 
 def bloger_forgot_password(requests):

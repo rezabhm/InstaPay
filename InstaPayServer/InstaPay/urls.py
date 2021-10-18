@@ -16,8 +16,8 @@ user urls :
     5. send forgot password code url
     6. verify forgot password sent code url
     7. change password url
-factor urls :
 
+factor urls :
 
     1.  create factor url                                                            # customer
     2.  return list of user's factor url                                             # user
@@ -94,16 +94,22 @@ My_app = 'InstaPay'
 
 urlpatterns = [
 
-
     # Bloger Urls
 
     re_path(r'^bloger/SignUp/$', views.bloger_signup, name="Bloger_SignUp"),
     re_path(r'^bloger/SignUp/Form/$', views.bloger_signup_form, name="Bloger_SignUp_Form"),
-    re_path(r'^bloger/verify/information/', views.bloger_verify_information, name="Bloger_Verify_Information"),
-    re_path(r'^bloger/edit/information/', views.bloger_edit_information, name="Bloger_Edit_Information"),
-    re_path(r'^bloger/forgot_password/', views.bloger_forgot_password, name="Bloger_Forgot_PassWord"),
-    re_path(r'^bloger/forgot_password/verify/', views.bloger_forgot_password_verify,
+    re_path(r'^bloger/verify/information/$', views.bloger_verify_information, name="Bloger_Verify_Information"),
+    re_path(r'^bloger/edit/information/$', views.bloger_edit_information, name="Bloger_Edit_Information"),
+    re_path(r'^bloger/edit/information/Form/$', views.bloger_edit_information_form, name="Bloger_Edit_Information_Form"),
+    re_path(r'^bloger/login/Form/$', views.bloger_login_form, name="Bloger_LogIn_Form"),
+    re_path(r'^bloger/login/$', views.bloger_login, name="Bloger_LogIn"),
+    re_path(r'^bloger/logout/$', views.bloger_logout, name="Bloger_LogOut"),
+    re_path(r'^bloger/forgot_password/Form/$', views.bloger_forgot_password_form, name="Bloger_Forgot_PassWord_Form"),
+    re_path(r'^bloger/forgot_password/verify/$', views.bloger_forgot_password_verify,
             name="Bloger_Forgot_PassWord_Verify"),
-    re_path(r'^bloger/change_password/', views.bloger_change_password, name="Bloger_Change_PassWord"),
+    re_path(r'^bloger/change_password/Form/$', views.bloger_change_password_form, name="Bloger_Change_PassWord_Form"),
+    re_path(r'^bloger/change_password/$', views.bloger_change_password, name="Bloger_Change_PassWord"),
+    re_path(r'bloger/change/user_name/$', views.bloger_change_username, name="Bloger_Change_UserName"),
+    re_path(r"^bloger/verify/phone_number/$", views.bloger_verify_phone_number, name="Bloger_Verify_Phone_Number"),
 
 ]

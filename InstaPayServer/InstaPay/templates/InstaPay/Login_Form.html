@@ -3,52 +3,15 @@
 {% block example %}
 
 
-<form action="{% url 'Bloger_SignUp' %}" method="post">
+<form action="{% url 'Bloger_LogIn' %}" method="post">
   {% csrf_token %}
 
   {{ error }}<br>
-
-  <label for="name">username: </label>
-  <input type="text" id="name" name="name"><br>
-
-  <label for="lastname">last name: </label>
-  <input type="text" id="lastname" name="last_name"><br>
-
   <label for="pagename">page name: </label>
   <input type="text" id="pagename" name="page_name"><br>
 
     <label for="password">password: </label>
   <input type="password" id="password" name="password"><br>
-
-    <label for="verify_password">verify password: </label>
-  <input type="password" id="verify_password" name="verify_password"><br>
-
-    <label for="address">address: </label>
-  <input type="text" id="address" name="address"><br>
-
-    <label for="phone_number">phone_number: </label>
-  <input type="number" id="phone_number" name="phone_number"><br>
-
-
-    <label for="national_code">national code: </label>
-  <input type="number" id="national_code" name="national_code"><br>
-
-
-    <label for="shaba">shaba: </label>
-  <input type="number" id="shaba" name="shaba"><br>
-
-
-    <label for="bank_account_number">bank_account_number: </label>
-  <input type="number" id="bank_account_number" name="bank_account_number"><br>
-
-
-    <label for="email">email: </label>
-  <input type="email" id="email" name="email"><br>
-
-
-    <label for="bank_name">bank name: </label>
-  <input type="text" id="bank_name" name="bank_name"><br>
-
 
   <input type="submit">
 

@@ -1,0 +1,52 @@
+{% extends 'InstaPay/main.html' %}
+
+{% block example %}
+
+
+<form action="{% url 'Bloger_Edit_Information' %}" method="post">
+  {% csrf_token %}
+
+  {{ error }}<br>
+
+  <label for="name">username: </label>
+  <input type="text" id="name" name="name" value="{{ name }}"><br>
+
+  <label for="lastname">last name: </label>
+  <input type="text" id="lastname" name="last_name" value="{{ last_name }}"><br>
+
+  <input type="hidden" id="page_name" name="page_name" value="{{ page_name }}"><br>
+
+  <input type="hidden" id="password" name="password" value="{{ password }}"><br>
+
+    <label for="address">address: </label>
+  <input type="text" id="address" name="address" value="{{ address }}"><br>
+
+    <label for="phone_number">phone_number: </label>
+  <input type="number" id="phone_number" name="phone_number" value="{{ phone_number }}"><br>
+
+
+    <label for="national_code">national code: </label>
+  <input type="number" id="national_code" name="national_code" value="{{ national_code }}"><br>
+
+
+    <label for="shaba">shaba: </label>
+  <input type="number" id="shaba" name="shaba" value="{{ shaba }}"><br>
+
+
+    <label for="bank_account_number">bank_account_number: </label>
+  <input type="number" id="bank_account_number" name="bank_account_number" value="{{ bank_account_number }}"><br>
+
+
+    <label for="email">email: </label>
+  <input type="email" id="email" name="email" value="{{ email }}"><br>
+
+
+    <label for="bank_name">bank name: </label>
+  <input type="text" id="bank_name" name="bank_name" value="{{ bank_name }}"><br>
+
+  <input type="submit">
+
+</form>
+
+
+{% endblock %}

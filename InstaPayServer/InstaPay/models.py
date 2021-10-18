@@ -1,6 +1,7 @@
 from django.db import models
 from uuid import uuid1
 import time
+import random
 
 # Create your models here.
 
@@ -119,8 +120,47 @@ class Bloger(models.Model):
     # bloger's password hashcode
     bloger_password_hashcode = models.CharField(max_length=128)
 
+    # bloger's forgot password's code
+    forgot_password_code = models.IntegerField(default=random.randint(100000, 999999))
+
+    # bloger's forgot password's deadline
+    forgot_password_code_deadline = models.FloatField(default=time.time()+300.0)
+
     def __str__(self):
         return str(self.page_name)
+
+    def verify_param(self, param_name):
+
+        """
+        we have dict with verify_dict name .
+        in this dict we have all of above attribute's value and return param_name value
+        """
+
+        verify_dict = {
+
+            "name": self.name,
+            "last_name": self.last_name,
+            "page_name": self.page_name,
+            "phone_number": self.phone_number,
+            "address": self.address,
+            "national_code": self.national_code,
+            "bnak_account_number": self.bank_account_number,
+            "bank_name": self.bank_name,
+            "shaba": self.shaba,
+            "email": self.bloger_email,
+            "bloger_hashcode": self.bloger_hashcode,
+            "password": self.bloger_password_hashcode,
+            "forgot_password_code": self.forgot_password_code,
+            "forgot_password_code_deadline": self.forgot_password_code_deadline
+
+        }
+
+        # return param_name's value
+        try:
+            return verify_dict[param_name]
+
+        except:
+            return False
 
 
 class Product(models.Model):
