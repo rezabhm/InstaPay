@@ -126,6 +126,9 @@ class Bloger(models.Model):
     # bloger's forgot password's deadline
     forgot_password_code_deadline = models.FloatField(default=time.time()+300.0)
 
+    # verify phone_number status
+    verify_phone_number = models.BooleanField(default=False)
+
     def __str__(self):
         return str(self.page_name)
 

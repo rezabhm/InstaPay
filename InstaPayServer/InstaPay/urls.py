@@ -104,12 +104,9 @@ urlpatterns = [
     re_path(r'^bloger/login/Form/$', views.bloger_login_form, name="Bloger_LogIn_Form"),
     re_path(r'^bloger/login/$', views.bloger_login, name="Bloger_LogIn"),
     re_path(r'^bloger/logout/$', views.bloger_logout, name="Bloger_LogOut"),
-    re_path(r'^bloger/forgot_password/Form/$', views.bloger_forgot_password_form, name="Bloger_Forgot_PassWord_Form"),
-    re_path(r'^bloger/forgot_password/verify/$', views.bloger_forgot_password_verify,
+    re_path(r'^bloger/forgot/password/Form/$', views.bloger_forgot_password_form, name="Bloger_Forgot_PassWord_Form"),
+    re_path(r'^bloger/forgot/password/verify/$', views.bloger_forgot_password_verify,
             name="Bloger_Forgot_PassWord_Verify"),
-    re_path(r'^bloger/change_password/Form/$', views.bloger_change_password_form, name="Bloger_Change_PassWord_Form"),
-    re_path(r'^bloger/change_password/$', views.bloger_change_password, name="Bloger_Change_PassWord"),
-    re_path(r'bloger/change/user_name/$', views.bloger_change_username, name="Bloger_Change_UserName"),
-    re_path(r"^bloger/verify/phone_number/$", views.bloger_verify_phone_number, name="Bloger_Verify_Phone_Number"),
+    re_path(r'^bloger/change/password/$', views.bloger_change_password, name="Bloger_Change_PassWord"),
 
 ]

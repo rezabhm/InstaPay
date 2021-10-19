@@ -1,5 +1,8 @@
+import random
+import time
+
 from django.shortcuts import HttpResponse
-from django.template import loader
+from django.template import loader, Context
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
@@ -407,25 +410,230 @@ def bloger_logout(requests):
     return main(requests)
 
 
-def bloger_forgot_password(requests):
+def bloger_forgot_password_form(requests, error_text="کدی که به شماره موبایل زیر ارسال شده را وارد کنید"):
 
     """
-    forgot password view to login bloger
+    forgot password form for change password
     """
-    pass
+
+    if requests.user.is_authenticated:
+
+        # redirect to main page
+        return main(requests)
+
+    else:
+
+        # generate new code and send it to bloge
+
+        # get page name from post request information
+        page_name = requests.POST["page_name"]
+
+        # get all of bloger list
+        bloger_list = models.Bloger.objects.all().filter(page_name=page_name)
+
+        # check user exist or not
+        if len(bloger_list) == 0:
+
+            # user's doesn't exist so we must redirect to signup page
+            return bloger_signup_form(requests, "چنین کاربری موجود نمی باشد . لظفا ثبت نام کنید")
+
+        else:
+
+            # we must generate verification code
+            bloger_obj = bloger_list[0]
+
+            # generate new code
+            bloger_obj.forgot_password_code = random.randint(100000, 999999)
+
+            # renew code's deadline
+            bloger_obj.forgot_password_code_deadline = time.time() + 300.0
+
+            # save bloger
+            bloger_obj.save()
+            phone_number = str(bloger_obj.phone_number)[4:-4]
+
+            # load template
+            forgot_password_form_html = loader.get_template("InstaPay/Forgot_Password_Form.html")
+
+            context = Context({
+
+                "error": error_text,
+                "phone_number": phone_number,
+                "page_name": page_name,
+                "next_page": "change_password",
+
+            })
+
+            return HttpResponse(forgot_password_form_html.render(context))
 
 
+@csrf_exempt
 def bloger_forgot_password_verify(requests):
 
     """
     verify forgot password code
     """
-    pass
+
+    if requests.user.is_superuser:
+
+        # redirect to main page
+        return main(requests)
+
+    elif requests.user.is_authenticated:
+
+        # in this condition user has logged in and try to verify it's sms
+
+        # get post data
+        request_inf = requests.POST
+
+        page_name = request_inf["page_name"]
+
+        # get bloger's list
+        bloger_list = models.Bloger.objects.all().filter(page_name=page_name)
+
+        if len(bloger_list) == 0:
+
+            # user doesn't exist and must signup
+            return bloger_signup_form(requests, "کاربری با  آدرس موجود نمیباشد لطفا ثبت نام کنید")
+
+        else:
+
+            # get bloger object
+            bloger_obj = bloger_list[0]
+
+            # change verify_phone_number value to True
+            bloger_obj.verify_phone_number = True
+            bloger_obj.save()
+
+            return main(requests)
+
+    else:
+
+        # verify code and redirect to change password
+
+        # get post data
+        request_inf = requests.POST
+
+        page_name = request_inf["page_name"]
+
+        # get bloger's list
+        bloger_list = models.Bloger.objects.all().filter(page_name=page_name)
+
+        if len(bloger_list) == 0:
+
+            # user doesn't exist and must signup
+            return bloger_signup_form(requests, "کاربری با  آدرس موجود نمیباشد لطفا ثبت نام کنید")
+
+        else:
+
+            # get bloger object
+            bloger_obj = bloger_list[0]
+
+            # get input code
+            code = request_inf["code"]
+
+            # get bloger code
+            bloger_code = bloger_obj.forgot_password_code
+
+            # check time
+            code_deadline = bloger_obj.forgot_password_code_deadline
+
+            if code_deadline < time.time():
+
+                # user can't change password and we must send new code
+                error_text = "کد را دیر وارد کرده اید .کد دیگری ارسال شده است لطفا آن کد را وارد کنید"
+                return bloger_forgot_password_form(requests, error_text)
+
+            else:
+
+                if bloger_code == code:
+
+                    # code is correct and redirect to change_password view
+                    password_hashcode = bloger_obj.bloger_password_hashcode
+                    return bloger_change_password_form(requests, page_name, password_hashcode)
+
+                else:
+
+                    # code is incorrect and must get it again
+                    return bloger_forgot_password_form(requests, "کد را صحیح وارد کنید")
 
 
-def bloger_change_password(requests):
+def bloger_change_password_form(requests, page_name, password_hashcode):
 
     """
     bloger change password
+
+    NOTE:
+        from url we can't access to this view .
+        the only for access this view is above view .
     """
-    pass
+
+    if requests.user.is_superuser:
+
+        # redirect to main page
+        return main(requests)
+
+    else:
+
+        # check password and page name
+        bloger_obj = models.Bloger.objects.all().filter(page_name=page_name)[0]
+
+        # get password_hashcode
+        if password_hashcode == bloger_obj.bloger_password_hashcode:
+
+            # user have access to change password
+            change_password_form = loader.get_template("InstaPay/Change_Password_Form.html")
+
+            context = Context({
+
+                "page_name": page_name,
+                "old_pass": password_hashcode
+
+            })
+
+            return HttpResponse(change_password_form.render(context))
+
+        else:
+
+            # password is incorrect
+            return bloger_login_form(requests, "اطلاعات وارد شده نادرست است.")
+
+@csrf_exempt
+def bloger_change_password(requests):
+
+    """
+    change password in database
+    """
+
+    # get requests post information
+    old_pass = requests.POST["old_pass"]
+    new_pass = requests.POST["new_pass"]
+    verify_new_pass = requests.POST["verify_new_pass"]
+    page_name = requests.POST["page_name"]
+
+    # get bloger objects
+    bloger_obj = models.Bloger.objects.all().filter(page_name=page_name)[0]
+
+    if bloger_obj.bloger_password_hashcode != old_pass:
+
+        # user cant change password
+        return main(requests)
+
+    else:
+
+        # user have access to change password
+        # check new_pass and verify_new_pass
+
+        if new_pass != verify_new_pass:
+
+            # redirect to previous page
+            return bloger_change_password_form(requests, page_name, old_pass)
+
+        else:
+
+            # change password
+            new_pass = hashlib.sha256(new_pass.encode()).hexdigest()
+            bloger_obj.bloger_password_hashcode = new_pass
+            bloger_obj.save()
+
+            return bloger_login_form(requests, "موفقیت رمز عبور را تغییر داده اید")
