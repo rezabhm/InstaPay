@@ -6,8 +6,9 @@ from django.template import loader, Context
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
-from . import models
 
+from . import models
+from . import form
 import hashlib
 
 # views code ...
@@ -637,3 +638,28 @@ def bloger_change_password(requests):
             bloger_obj.save()
 
             return bloger_login_form(requests, "موفقیت رمز عبور را تغییر داده اید")
+
+
+def create_product_form(requests):
+    """
+    create product form for get product information
+    """
+
+    if requests.user.is_authenticated:
+
+        # return create product form
+        product_form = loader.get_template("InstaPay/Create_Product.html")
+
+        context = Context({
+
+            "form": form.ProductForm(),
+            "username": requests.user.username,
+
+        })
+
+        return HttpResponse(product_form.render(context))
+
+    else:
+
+        # redirect to main page
+        return main(requests)

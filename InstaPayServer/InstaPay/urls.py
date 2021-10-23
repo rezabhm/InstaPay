@@ -17,37 +17,6 @@ user urls :
     6. verify forgot password sent code url
     7. change password url
 
-factor urls :
-
-    1.  create factor url                                                            # customer
-    2.  return list of user's factor url                                             # user
-    3.  return list of user's factor order by date url                               # user
-    4.  return list of all of factor url                                             # admin
-    5.  return list of all of factor order by date url                               # admin
-    6.  return list of all of factor order by user url                               # admin
-    7.  return list of user's ordering url                                           # user
-    8.  return list of user's ordering order by date url                             # user
-    8.  return list all of ordering url                                              # admin
-    9.  return list all of ordering order by date url                                # admin
-    10. return list all of ordering order by user url                                # admin
-    11. return list of user's payment-factor url                                     # user
-    12. return list all of payment-factor url                                        # admin
-    13. return list all of payment-factor order by date url                          # admin
-    14. return list all of payment-factor order by user url                          # admin
-    15. return excel for that include all of factor that we must pay to user url     # admin
-        and convert payment-factor to not-payment-factor
-    16. return list all of not-payment-factor url                                    # admin
-    17. return list not-payment-factor order by user url                             # admin
-    18. return list not-payment-factor order by date url                             # admin
-    19. convert not-payment-factor to payment-factor url                             # admin
-    20. return all of request's factor excel url                                     # admin
-    21. get customer information url                                                 # customer
-    22. return all of customer factor                                                # customer
-
-NOTE : factor is factor that user has send product to customer
-NOTE : ordering is factor that didn't send to customer
-NOTE : payment-factor is factor that we must pay money to user
-NOTE : Not-Payment-factor is factor that we had pay money to user
 
 product urls :
 
@@ -76,6 +45,40 @@ product urls :
     23. return list of product payment-factor order by date url                      # admin
     24. return list of product not-payment-factor url                                # admin
     25. return list of product not-payment-factor order by date url                  # admin
+    26. show product detail url                                                      # everyone
+
+factor urls :
+
+    1.  create factor url                                                            # customer
+    2.  return list of user's factor url                                             # user
+    3.  return list of user's factor order by date url                               # user
+    4.  return list of all of factor url                                             # admin
+    5.  return list of all of factor order by date url                               # admin
+    6.  return list of all of factor order by user url                               # admin
+    7.  return list of user's ordering url                                           # user
+    8.  return list of user's ordering order by date url                             # user
+    8.  return list all of ordering url                                              # admin
+    9.  return list all of ordering order by date url                                # admin
+    10. return list all of ordering order by user url                                # admin
+    11. return list of user's payment-factor url                                     # user
+    12. return list all of payment-factor url                                        # admin
+    13. return list all of payment-factor order by date url                          # admin
+    14. return list all of payment-factor order by user url                          # admin
+    15. return excel for that include all of factor that we must pay to user url     # admin
+        and convert payment-factor to not-payment-factor
+    16. return list all of not-payment-factor url                                    # admin
+    17. return list not-payment-factor order by user url                             # admin
+    18. return list not-payment-factor order by date url                             # admin
+    19. convert not-payment-factor to payment-factor url                             # admin
+    20. return all of request's factor excel url                                     # admin
+    21. get customer information url                                                 # customer
+    22. return all of customer factor                                                # customer
+    
+
+NOTE : factor is factor that user has send product to customer
+NOTE : ordering is factor that didn't send to customer
+NOTE : payment-factor is factor that we must pay money to user
+NOTE : Not-Payment-factor is factor that we had pay money to user
 
 
 
@@ -108,5 +111,10 @@ urlpatterns = [
     re_path(r'^bloger/forgot/password/verify/$', views.bloger_forgot_password_verify,
             name="Bloger_Forgot_PassWord_Verify"),
     re_path(r'^bloger/change/password/$', views.bloger_change_password, name="Bloger_Change_PassWord"),
+
+    # Product Urls
+
+    re_path(r"^product/create/form/$", views.create_product_form, name="Create_Product_form"),
+
 
 ]

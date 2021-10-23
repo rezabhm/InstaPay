@@ -73,14 +73,3 @@ class OffCodeAdmin(admin.ModelAdmin):
         ("relation", {"fields": ("bloger", "product", "customer")})
 
     )
-
-
-@admin.register(models.Image)
-class ImageAdmin(admin.ModelAdmin):
-
-    fieldsets = (
-
-        ("Image information", {"fields": ("name", "image",)}),
-        ("relation", {"fields": ("product",)})
-
-    )

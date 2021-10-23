@@ -1,0 +1,46 @@
+{% extends 'InstaPay/main.html' %}
+
+
+{% block example %}
+
+<form action="{% url 'Create_Product' %}" method="POST" enctype="multipart/form-data" >
+
+    {{ csrf_token }}
+
+    image: {{ form.as_p }}<br>
+
+    <input type="hidden" value="{{ username }}" name="page_name" >
+
+    <label for="name">name:</label>
+    <input type="text" id="name" name="name">
+
+
+    <label for="price">price:</label>
+    <input type="number" id="price" name="price">
+
+
+    <label for="description">description:</label>
+    <input type="text" id="description" name="description">
+
+
+    <label for="number">number:</label>
+    <input type="number" id="number" name="number">
+
+
+    <label for="purchase_state">purchase state: </label>
+    <input type="checkbox" id="purchase_state" name="purchase_state" value="true">
+
+
+    <label for="off_code">off code:</label>
+    <input type="number" id="off_code" name="off_code" value="0">
+
+
+    <label for="off_code_deadline">off code dealine (minute):</label>
+    <input type="number" id="off_code_deadline" name="off_code_deadline">
+
+    <label for="category">category: </label>
+    <input type="text" id="category" name="category">
+
+</form>
+
+{% endblock %}

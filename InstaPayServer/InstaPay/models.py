@@ -218,6 +218,9 @@ class Product(models.Model):
     # product hashcode
     product_hashcode = models.CharField(max_length=128, default=str(hash(name) % 10 ** 8))
 
+    # image
+    image = models.ImageField(upload_to="product_image/", default=None)
+
     # relation
     bloger = models.ForeignKey(Bloger, on_delete=models.CASCADE)
 
@@ -403,26 +406,5 @@ class Factor(models.Model):
 ###########################################################
 ###########################################################
 """                  Additional class                   """
-
-
 ###########################################################
 ###########################################################
-
-
-class Image(models.Model):
-    """
-    Image's table's name column name :
-
-        1. name
-        2. image input file
-
-    """
-
-    name = models.CharField(max_length=25)
-    image = models.ImageField(upload_to="product_image/")
-
-    # relation
-    product = models.OneToOneField(Product, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return str(self.name)
