@@ -115,6 +115,6 @@ urlpatterns = [
     # Product Urls
 
     re_path(r"^product/create/form/$", views.create_product_form, name="Create_Product_form"),
-
+    re_path(r"^product/create/$", views.create_product, name="Create_Product"),
 
 ]

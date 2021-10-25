@@ -218,11 +218,11 @@ class Product(models.Model):
     # product hashcode
     product_hashcode = models.CharField(max_length=128, default=str(hash(name) % 10 ** 8))
 
-    # image
-    image = models.ImageField(upload_to="product_image/", default=None)
-
     # relation
     bloger = models.ForeignKey(Bloger, on_delete=models.CASCADE)
+
+    # image
+    image = models.ImageField(upload_to="InstaPay/Product_Image/", default=None)
 
     def __str__(self):
         return str(self.name)

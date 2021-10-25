@@ -599,6 +599,7 @@ def bloger_change_password_form(requests, page_name, password_hashcode):
             # password is incorrect
             return bloger_login_form(requests, "اطلاعات وارد شده نادرست است.")
 
+
 @csrf_exempt
 def bloger_change_password(requests):
 
@@ -650,12 +651,12 @@ def create_product_form(requests):
         # return create product form
         product_form = loader.get_template("InstaPay/Create_Product.html")
 
-        context = Context({
+        context = {
 
             "form": form.ProductForm(),
             "username": requests.user.username,
 
-        })
+        }
 
         return HttpResponse(product_form.render(context))
 
@@ -663,3 +664,58 @@ def create_product_form(requests):
 
         # redirect to main page
         return main(requests)
+
+
+@csrf_exempt
+def create_product(requests):
+
+    """
+    create product and store it's image
+    """
+
+    if requests.user.is_authenticated and not requests.user.is_superuser:
+
+        # create form
+
+        # save form image and product information
+        requests_inf = requests.POST
+
+        # get bloger object
+        bloger_obj = models.Bloger.objects.all().filter(page_name=requests.user.username)[0]
+
+        # get information
+        name = requests_inf["name"]
+        price = requests_inf["price"]
+        description = requests_inf["description"]
+        number = requests_inf["number"]
+        off_code = requests_inf["off_code"]
+        off_code_deadline = requests_inf["off_code_deadline"]
+        category = requests_inf["category"]
+        image = requests.FILES.get('image')
+
+        # set purchase_state value
+        try:
+            x = requests_inf["purchase_state"]
+            purchase_state = True
+        except:
+            purchase_state = False
+
+        # create product object
+        prod = models.Product()
+
+        # set attribute
+        prod.name = name
+        prod.price = price
+        prod.description = description
+        prod.number = number
+        prod.purchase_state = purchase_state
+        prod.off_code = off_code
+        prod.off_code_deadline = off_code_deadline
+        prod.category = category
+        prod.image = image
+        prod.bloger = bloger_obj
+
+        # save product
+        prod.save()
+
+        return HttpResponse("save ok")

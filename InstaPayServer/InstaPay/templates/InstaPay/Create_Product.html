@@ -7,39 +7,42 @@
 
     {{ csrf_token }}
 
-    image: {{ form.as_p }}<br>
+    <label for="image">image: </label>
+    <input type="file" name="image" id="image"><br>
 
     <input type="hidden" value="{{ username }}" name="page_name" >
 
     <label for="name">name:</label>
-    <input type="text" id="name" name="name">
+    <input type="text" id="name" name="name"><br>
 
 
     <label for="price">price:</label>
-    <input type="number" id="price" name="price">
+    <input type="number" id="price" name="price"><br>
 
 
     <label for="description">description:</label>
-    <input type="text" id="description" name="description">
+    <input type="text" id="description" name="description"><br>
 
 
     <label for="number">number:</label>
-    <input type="number" id="number" name="number">
+    <input type="number" id="number" name="number"><br>
 
 
     <label for="purchase_state">purchase state: </label>
-    <input type="checkbox" id="purchase_state" name="purchase_state" value="true">
+    <input type="checkbox" id="purchase_state" name="purchase_state" value="true"><br>
 
 
     <label for="off_code">off code:</label>
-    <input type="number" id="off_code" name="off_code" value="0">
+    <input type="number" id="off_code" name="off_code" value="0"><br>
 
 
-    <label for="off_code_deadline">off code dealine (minute):</label>
-    <input type="number" id="off_code_deadline" name="off_code_deadline">
+    <label for="off_code_deadline">off code deadline (minute):</label>
+    <input type="number" id="off_code_deadline" name="off_code_deadline"><br>
 
     <label for="category">category: </label>
-    <input type="text" id="category" name="category">
+    <input type="text" id="category" name="category"><br>
+
+    <input type="submit" >
 
 </form>
 
