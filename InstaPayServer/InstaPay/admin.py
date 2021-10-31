@@ -22,7 +22,9 @@ class ProductAdmin(admin.ModelAdmin):
 
     fieldsets = (
 
-        ("product information", {"fields": ("name", "price", "description", "number", "category", "product_hashcode", "image")}),
+        ("product information", {"fields": ("name", "price", "description", "number", "category", "product_hashcode",
+                                            "image")}),
+
         ("off code", {"fields": ("off_code", "off_code_deadline")}),
         ("status", {"fields": ("purchase_state",)}),
         ("relation", {"fields": ("bloger",)})

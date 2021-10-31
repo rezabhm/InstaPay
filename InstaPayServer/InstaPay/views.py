@@ -1,7 +1,8 @@
 import random
 import time
 
-from django.shortcuts import HttpResponse
+from django.shortcuts import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from django.template import loader, Context
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
@@ -41,7 +42,7 @@ def bloger_signup(requests):
     if requests.user.is_authenticated:
 
         # redirect to main page
-        return main(requests)
+        return HttpResponseRedirect(reverse('main'))
 
     else:
 
@@ -133,7 +134,7 @@ def bloger_signup_form(requests, error_text="کادر های خالی را بر 
     if requests.user.is_authenticated:
 
         # redirect to main page
-        return main(requests)
+        return HttpResponseRedirect(reverse('main'))
 
     else:
 
@@ -245,7 +246,7 @@ def bloger_edit_information_form(requests, error_text="قادیر را بروز 
     else:
 
         # redirect to main page
-        return main(requests)
+        return HttpResponseRedirect(reverse('main'))
 
 
 @csrf_exempt
@@ -283,19 +284,19 @@ def bloger_edit_information(requests):
         if len(bloger_list) != 1:
 
             # redirect to signup form page because someone previously registered with this page name
-            return bloger_edit_information_form(requests, "نام بیج شما صحیح نمیباشد !!!")
+            return HttpResponseRedirect(reverse('bloger_edit_information_form', args=["نام بیج شما صحیح نمیباشد !!!"]))
 
         # Check Phone number
         if (len(str(phone_number)) != 11) or (str(phone_number)[:2] != "09"):
 
             # raised error because phone number format is false
-            return bloger_signup_form(requests, "فرمت شماره موبایل نادرست است ")
+            return HttpResponseRedirect(reverse("bloger_signup_form",args=[ "فرمت شماره موبایل نادرست است "]))
 
         # Check national code
         if len(str(national_code)) != 10:
 
             # raised error because of false format
-            return bloger_signup_form(requests, "کد ملی را اشتباه وارد کرده اید")
+            return HttpResponseRedirect(reverse(bloger_signup_form,args=[ "کد ملی را اشتباه وارد کرده اید"]))
 
         # after check above information in here we will edit information
 
@@ -326,17 +327,17 @@ def bloger_edit_information(requests):
             # save bloger
             bloger_obj.save()
 
-            return bloger_edit_information_form(requests, "مقادیر با موفقیت تغییر یافت")
+            return HttpResponseRedirect(reverse("bloger_edit_information_form", args=[ "مقادیر با موفقیت تغییر یافت"]))
 
         else:
 
             # if password is incorrect
-            return bloger_edit_information_form(requests, "رمز عبور اشتباه وارد شده است ")
+            return HttpResponseRedirect(reverse("bloger_edit_information_form", args=[ "رمز عبور اشتباه وارد شده است "]))
 
     else:
 
         # redirect to main page
-        return main(requests)
+        return HttpResponseRedirect(reverse('main'))
 
 
 def bloger_login_form(requests, error_text="آدرس بیج و رمز عبور را وارد کنید"):
@@ -348,7 +349,7 @@ def bloger_login_form(requests, error_text="آدرس بیج و رمز عبور �
     if requests.user.is_authenticated:
 
         # redirect to main page
-        return main(requests)
+        return HttpResponseRedirect(reverse('main'))
 
     else:
 
@@ -384,17 +385,17 @@ def bloger_login(requests):
 
             # login
             login(requests, user_obj)
-            return main(requests)
+            return HttpResponseRedirect(reverse('main'))
 
         else:
 
             # username or password is incorrect
-            return bloger_login_form(requests, "رمز عبور یا نام بیج اشتباه است")
+            return HttpResponseRedirect(reverse("bloger_login_form",args= ["رمز عبور یا نام بیج اشتباه است"]))
 
     else:
 
         # user login previously and just redirect to main page
-        return main(requests)
+        return HttpResponseRedirect(reverse('main'))
 
 
 def bloger_logout(requests):
@@ -408,7 +409,7 @@ def bloger_logout(requests):
         # logout
         logout(requests)
 
-    return main(requests)
+    return HttpResponseRedirect(reverse('main'))
 
 
 def bloger_forgot_password_form(requests, error_text="کدی که به شماره موبایل زیر ارسال شده را وارد کنید"):
@@ -420,7 +421,7 @@ def bloger_forgot_password_form(requests, error_text="کدی که به شمار�
     if requests.user.is_authenticated:
 
         # redirect to main page
-        return main(requests)
+        return HttpResponseRedirect(reverse('main'))
 
     else:
 
@@ -436,7 +437,8 @@ def bloger_forgot_password_form(requests, error_text="کدی که به شمار�
         if len(bloger_list) == 0:
 
             # user's doesn't exist so we must redirect to signup page
-            return bloger_signup_form(requests, "چنین کاربری موجود نمی باشد . لظفا ثبت نام کنید")
+            return HttpResponseRedirect(reverse("bloger_signup_form",
+                                                args=[ "چنین کاربری موجود نمی باشد . لظفا ثبت نام کنید"]))
 
         else:
 
@@ -478,7 +480,7 @@ def bloger_forgot_password_verify(requests):
     if requests.user.is_superuser:
 
         # redirect to main page
-        return main(requests)
+        return HttpResponseRedirect(reverse('main'))
 
     elif requests.user.is_authenticated:
 
@@ -495,7 +497,7 @@ def bloger_forgot_password_verify(requests):
         if len(bloger_list) == 0:
 
             # user doesn't exist and must signup
-            return bloger_signup_form(requests, "کاربری با  آدرس موجود نمیباشد لطفا ثبت نام کنید")
+            return HttpResponseRedirect(reverse("bloger_signup_form",args=[ "کاربری با  آدرس موجود نمیباشد لطفا ثبت نام کنید"]))
 
         else:
 
@@ -506,7 +508,7 @@ def bloger_forgot_password_verify(requests):
             bloger_obj.verify_phone_number = True
             bloger_obj.save()
 
-            return main(requests)
+            return HttpResponseRedirect(reverse('main'))
 
     else:
 
@@ -523,7 +525,8 @@ def bloger_forgot_password_verify(requests):
         if len(bloger_list) == 0:
 
             # user doesn't exist and must signup
-            return bloger_signup_form(requests, "کاربری با  آدرس موجود نمیباشد لطفا ثبت نام کنید")
+            return HttpResponseRedirect(reverse("bloger_signup_form",
+                                                args=["کاربری با  آدرس موجود نمیباشد لطفا ثبت نام کنید"]))
 
         else:
 
@@ -543,7 +546,7 @@ def bloger_forgot_password_verify(requests):
 
                 # user can't change password and we must send new code
                 error_text = "کد را دیر وارد کرده اید .کد دیگری ارسال شده است لطفا آن کد را وارد کنید"
-                return bloger_forgot_password_form(requests, error_text)
+                return HttpResponseRedirect(reverse("bloger_forgot_password_form", args=[error_text]))
 
             else:
 
@@ -551,12 +554,13 @@ def bloger_forgot_password_verify(requests):
 
                     # code is correct and redirect to change_password view
                     password_hashcode = bloger_obj.bloger_password_hashcode
-                    return bloger_change_password_form(requests, page_name, password_hashcode)
+                    return HttpResponseRedirect(reverse("bloger_change_password_form",
+                                                        args= [page_name, password_hashcode]))
 
                 else:
 
                     # code is incorrect and must get it again
-                    return bloger_forgot_password_form(requests, "کد را صحیح وارد کنید")
+                    return HttpResponseRedirect(reverse("bloger_forgot_password_form",args=[ "کد را صحیح وارد کنید"]))
 
 
 def bloger_change_password_form(requests, page_name, password_hashcode):
@@ -572,7 +576,7 @@ def bloger_change_password_form(requests, page_name, password_hashcode):
     if requests.user.is_superuser:
 
         # redirect to main page
-        return main(requests)
+        return HttpResponseRedirect(reverse('main'))
 
     else:
 
@@ -597,7 +601,7 @@ def bloger_change_password_form(requests, page_name, password_hashcode):
         else:
 
             # password is incorrect
-            return bloger_login_form(requests, "اطلاعات وارد شده نادرست است.")
+            return HttpResponseRedirect(reverse("bloger_login_form", args=[ "اطلاعات وارد شده نادرست است."]))
 
 
 @csrf_exempt
@@ -619,7 +623,7 @@ def bloger_change_password(requests):
     if bloger_obj.bloger_password_hashcode != old_pass:
 
         # user cant change password
-        return main(requests)
+        return HttpResponseRedirect(reverse('main'))
 
     else:
 
@@ -629,7 +633,7 @@ def bloger_change_password(requests):
         if new_pass != verify_new_pass:
 
             # redirect to previous page
-            return bloger_change_password_form(requests, page_name, old_pass)
+            return HttpResponseRedirect(reverse("bloger_change_password_form", args=[page_name, old_pass]))
 
         else:
 
@@ -638,7 +642,7 @@ def bloger_change_password(requests):
             bloger_obj.bloger_password_hashcode = new_pass
             bloger_obj.save()
 
-            return bloger_login_form(requests, "موفقیت رمز عبور را تغییر داده اید")
+            return HttpResponseRedirect(reverse("bloger_login_form", args=[ "موفقیت رمز عبور را تغییر داده اید"]))
 
 
 def create_product_form(requests):
@@ -646,14 +650,13 @@ def create_product_form(requests):
     create product form for get product information
     """
 
-    if requests.user.is_authenticated:
+    if requests.user.is_authenticated and not requests.user.is_superuser:
 
         # return create product form
         product_form = loader.get_template("InstaPay/Create_Product.html")
 
         context = {
 
-            "form": form.ProductForm(),
             "username": requests.user.username,
 
         }
@@ -663,7 +666,7 @@ def create_product_form(requests):
     else:
 
         # redirect to main page
-        return main(requests)
+        return HttpResponseRedirect(reverse('main'))
 
 
 @csrf_exempt
@@ -675,9 +678,7 @@ def create_product(requests):
 
     if requests.user.is_authenticated and not requests.user.is_superuser:
 
-        # create form
-
-        # save form image and product information
+        # get post data
         requests_inf = requests.POST
 
         # get bloger object
@@ -692,6 +693,7 @@ def create_product(requests):
         off_code_deadline = requests_inf["off_code_deadline"]
         category = requests_inf["category"]
         image = requests.FILES.get('image')
+        product_hashcode = str(hash(bloger_obj.page_name+name) % 10 ** 12)
 
         # set purchase_state value
         try:
@@ -714,8 +716,135 @@ def create_product(requests):
         prod.category = category
         prod.image = image
         prod.bloger = bloger_obj
+        prod.product_hashcode = product_hashcode
 
         # save product
         prod.save()
 
-        return HttpResponse("save ok")
+        return HttpResponseRedirect(reverse('Product_List'))
+
+    else:
+
+        # redirect to main page
+        return HttpResponseRedirect(reverse('main'))
+
+
+def product_list(requests):
+
+    """
+    return all of user's product
+    """
+    print("start this")
+
+    if requests.user.is_authenticated and not requests.user.is_superuser:
+        print("start 1")
+
+        # get product list
+        prod_list = models.Product.objects.all().filter(bloger__page_name=requests.user.username)
+
+        if len(prod_list) > 0:
+
+            context = {
+
+                "prod_len": True,
+                'prod_list': prod_list,
+                "super_user": False
+
+            }
+
+        else:
+
+            context = {
+
+                "prod_len": False,
+                'prod_list': prod_list,
+                "super_user": False
+
+            }
+
+        # load template
+        prod_list_temp = loader.get_template("InstaPay/Product_List.html")
+
+        return HttpResponse(prod_list_temp.render(context))
+
+    elif requests.user.is_authenticated and requests.user.is_superuser:
+        print("start 2")
+
+        # get product list
+        prod_list = models.Product.objects.all()
+
+        if len(prod_list) > 0:
+
+            context = {
+
+                "prod_len": True,
+                'prod_list': prod_list,
+                "super_user": True
+
+            }
+
+        else:
+
+            context = {
+
+                "prod_len": False,
+                'prod_list': prod_list,
+                "super_user": True
+
+            }
+
+        # load template
+        prod_list_temp = loader.get_template("InstaPay/Product_List.html")
+
+        return HttpResponse(prod_list_temp.render(context))
+
+    else:
+        print("start 3")
+
+        return HttpResponseRedirect(reverse('main'))
+
+
+def edit_product_form(requests):
+
+    """
+    return html for edit product
+    """
+
+    if requests.user.is_authenticated and not requests.user.is_superuser:
+
+        # load template
+        edit_temp = loader.get_template("InstaPay/Edit_Product.html")
+
+        # we add user's username to form
+        context = {
+
+            "hidden_state": True,
+            "username": requests.user.username
+
+        }
+
+        return HttpResponse(edit_temp.render(context))
+
+    elif requests.user.is_authenticated and requests.user.is_superuser:
+
+        # load template
+        edit_temp = loader.get_template("InstaPay/Edit_Product.html")
+
+        # we add user's username to form
+        context = {
+
+            "hidden_state": False,
+
+        }
+
+
+def edit_product(requests, product_hashcode):
+    pass
+
+
+def delete_product(requests, product_hashcode):
+    pass
+
+
+def product_buy(requests, product_hashcode):
+    pass

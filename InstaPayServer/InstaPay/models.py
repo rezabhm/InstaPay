@@ -219,7 +219,7 @@ class Product(models.Model):
     product_hashcode = models.CharField(max_length=128, default=str(hash(name) % 10 ** 8))
 
     # relation
-    bloger = models.ForeignKey(Bloger, on_delete=models.CASCADE)
+    bloger = models.ForeignKey(Bloger, on_delete=models.CASCADE, default=None)
 
     # image
     image = models.ImageField(upload_to="InstaPay/Product_Image/", default=None)
@@ -266,7 +266,7 @@ class Customer(models.Model):
 
     # relation
     bloger = models.ForeignKey(Bloger, on_delete=models.CASCADE)
-    product = models.ManyToManyField(Product)
+    product = models.ManyToManyField(Product, default=None)
 
     def __str__(self):
         return str(self.phone_number)

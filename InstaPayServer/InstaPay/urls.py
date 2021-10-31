@@ -21,12 +21,12 @@ user urls :
 product urls :
 
     1.  create product url                                                           # user
+    7.  return list all of user's product url                                        # user
     2.  edit product url                                                             # user
     3.  delete product url                                                           # user
     4.  create product url                                                           # admin
     5.  edit product url                                                             # admin
     6.  delete product url                                                           # admin
-    7.  return list all of user's product url                                        # user
     8.  return list all of product url                                               # admin
     9.  return list all of product order by user url                                 # admin
     10. return list of product factor url                                            # user
@@ -97,6 +97,8 @@ My_app = 'InstaPay'
 
 urlpatterns = [
 
+    re_path(r'^$', views.main, name="main"),
+
     # Bloger Urls
 
     re_path(r'^bloger/SignUp/$', views.bloger_signup, name="Bloger_SignUp"),
@@ -116,5 +118,10 @@ urlpatterns = [
 
     re_path(r"^product/create/form/$", views.create_product_form, name="Create_Product_form"),
     re_path(r"^product/create/$", views.create_product, name="Create_Product"),
+    re_path(r'^product/list/$', views.product_list, name="Product_List"),
+    re_path(r'^product/edit/$', views.edit_product, name='Edit_Product'),
+    re_path(r'^product/edit/form/(?P<product_hashcode>[0-9]{12})/$', views.edit_product_form, name='Edit_Product_Form'),
+    re_path(r'^product/delete/(?P<product_hashcode>[0-9]{12})/$', views.delete_product, name="Delete_Product"),
+    re_path(r'^(?P<product_hashcode>[0-9]{12})/$', views.product_buy, name="Product_Buy"),
 
 ]
