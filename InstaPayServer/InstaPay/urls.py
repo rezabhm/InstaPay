@@ -120,8 +120,8 @@ urlpatterns = [
     re_path(r"^product/create/$", views.create_product, name="Create_Product"),
     re_path(r'^product/list/$', views.product_list, name="Product_List"),
     re_path(r'^product/edit/$', views.edit_product, name='Edit_Product'),
-    re_path(r'^product/edit/form/(?P<product_hashcode>[0-9]{12})/$', views.edit_product_form, name='Edit_Product_Form'),
-    re_path(r'^product/delete/(?P<product_hashcode>[0-9]{12})/$', views.delete_product, name="Delete_Product"),
-    re_path(r'^(?P<product_hashcode>[0-9]{12})/$', views.product_buy, name="Product_Buy"),
+    re_path(r'^product/edit/form/(?P<product_hashcode>[0-9]{11})/$', views.edit_product_form, name='Edit_Product_Form'),
+    re_path(r'^product/delete/(?P<product_hashcode>[0-9]{11})/$', views.delete_product, name="Delete_Product"),
+    re_path(r'^(?P<product_hashcode>[0-9]{11})/$', views.product_buy, name="Product_Buy"),
 
 ]

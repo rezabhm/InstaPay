@@ -1,0 +1,63 @@
+{% extends 'InstaPay/main.html' %}
+
+{% block example %}
+
+<form action="{% url 'Edit_Product' %}" method="post">
+
+      {{ csrf_token }}
+
+
+    <img src="{{ product.image.url }}" >
+    you can't change image<br>
+
+    <input type="hidden" value="{{ product.product_hashcode }}" name="product_hashcode" >
+
+    <label for="name">name:</label>
+    <input type="text" id="name" name="name" value="{{ product.name }}"><br>
+
+
+    <label for="price">price:</label>
+    <input type="number" id="price" name="price" value="{{ product.price }}"><br>
+
+
+    <label for="description">description:</label>
+    <input type="text" id="description" name="description" value="{{ product.description }}"><br>
+
+
+    <label for="number">number:</label>
+    <input type="number" id="number" name="number" value="{{ product.number }}"><br>
+
+
+    <input type="hidden" name="purchase_state" value="{{ product.purchase_state }}"><br>
+
+    {% if product.purchase_state %}
+
+      vaziat kharid shoma faal ast agar mikhahid geire faal shavad bar roye gozine zir click konid
+
+    {% else %}
+
+      vaziat kharid shoma geire faal ast agar mikhahid faal shavad bar roye gozine zir click konid
+
+    {% endif %}
+    <br>
+      <label for="purchase_state_change">tagyir</label>
+      <input type="checkbox" id="purchase_state_change" name="purchase_state_change" value="true"><br>
+
+
+    <label for="off_code">off code:</label>
+    <input type="number" id="off_code" name="off_code" value="{{ product.off_code }}"><br>
+
+
+    <label for="off_code_deadline">off code deadline (minute):</label>
+    <input type="number" id="off_code_deadline" name="off_code_deadline" value="{{ product.off_code_deadline }}"><br>
+
+    <label for="category">category: </label>
+    <input type="text" id="category" name="category" value="{{ product.category }}"><br>
+
+    <input type="submit" >
+
+
+</form>
+
+
+{% endblock %}

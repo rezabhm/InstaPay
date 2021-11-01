@@ -1,5 +1,140 @@
 {% extends 'InstaPay/main.html' %}
 
-{% block content %}
-heelooo
+
+{% block example %}
+
+{% if prod_len %}
+
+<table>
+
+    <thead>
+
+    {% if super_user %}
+
+    <th>
+        page name
+
+    </th>
+
+    {% endif %}
+
+
+    <th>
+
+        name
+
+    </th>
+
+
+    <th>
+        price
+    </th>
+
+
+    <th>
+        number of product
+    </th>
+
+
+    <th>
+        off code
+    </th>
+
+
+    <th>
+        off code deadline
+    </th>
+
+    <th>
+        purchase state
+    </th>
+
+
+    <th>
+        category
+    </th>
+
+
+    <th>
+        buy product
+    </th>
+
+    <th>
+        delete product
+    </th>
+
+    <th>
+        edit product
+    </th>
+
+    </thead>
+
+    {% for prod in prod_list %}
+        <tr>
+        {% if super_user %}
+
+        <td>
+            {{ prod.bloger.page_name }}
+
+        </td>
+
+        {% endif %}
+
+
+        <td>
+
+            {{ prod.name }}
+
+        </td>
+
+
+        <td>
+            {{ prod.price }}
+        </td>
+
+
+        <td>
+            {{ prod.number }}
+        </td>
+
+
+        <td>
+            {{ prod.off_code }}
+        </td>
+
+
+        <td>
+            {{ prod.off_code_deadline }}
+        </td>
+
+        <td>
+            {{ prod.purchase_state }}
+        </td>
+
+
+        <td>
+            {{ prod.category }}
+        </td>
+
+
+        <td>
+            <a href="{% url 'Product_Buy' product_hashcode=prod.product_hashcode %}">site.com/{{ prod.product_hashcode }}/</a>
+        </td>
+
+
+        <td>
+            <a href="{% url 'Delete_Product' product_hashcode=prod.product_hashcode %}"><input type="submit" value="delete"></a>
+        </td>
+
+        <td>
+            <a href="{% url 'Edit_Product_Form' product_hashcode=prod.product_hashcode %}"><input type="submit" value="edit"></a>
+        </td>
+        </tr>
+    {% endfor %}
+
+</table>
+
+{% else %}
+there is no product
+{% endif %}
 {% endblock %}

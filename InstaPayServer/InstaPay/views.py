@@ -734,10 +734,8 @@ def product_list(requests):
     """
     return all of user's product
     """
-    print("start this")
 
     if requests.user.is_authenticated and not requests.user.is_superuser:
-        print("start 1")
 
         # get product list
         prod_list = models.Product.objects.all().filter(bloger__page_name=requests.user.username)
@@ -768,14 +766,14 @@ def product_list(requests):
         return HttpResponse(prod_list_temp.render(context))
 
     elif requests.user.is_authenticated and requests.user.is_superuser:
-        print("start 2")
 
         # get product list
         prod_list = models.Product.objects.all()
 
         if len(prod_list) > 0:
 
-            context = {
+
+            cont = {
 
                 "prod_len": True,
                 'prod_list': prod_list,
@@ -785,7 +783,8 @@ def product_list(requests):
 
         else:
 
-            context = {
+
+            cont = {
 
                 "prod_len": False,
                 'prod_list': prod_list,
@@ -793,58 +792,168 @@ def product_list(requests):
 
             }
 
+
         # load template
         prod_list_temp = loader.get_template("InstaPay/Product_List.html")
 
-        return HttpResponse(prod_list_temp.render(context))
+        return HttpResponse(prod_list_temp.render(cont))
 
     else:
-        print("start 3")
 
         return HttpResponseRedirect(reverse('main'))
 
 
-def edit_product_form(requests):
+def edit_product_form(requests, product_hashcode):
 
     """
     return html for edit product
     """
 
-    if requests.user.is_authenticated and not requests.user.is_superuser:
+    # only admin and bloger can access this page
+    if not requests.user.is_authenticated:
 
-        # load template
-        edit_temp = loader.get_template("InstaPay/Edit_Product.html")
+        # return to main page
+        return HttpResponseRedirect(reverse('main'))
 
-        # we add user's username to form
-        context = {
+    else:
 
-            "hidden_state": True,
-            "username": requests.user.username
+        # at first we must show previous value and let them change it
+        product_list_objects = models.Product.objects.all().filter(product_hashcode=product_hashcode)
 
-        }
+        if len(product_list_objects) == 0:
 
-        return HttpResponse(edit_temp.render(context))
+            # return to main page because there is no product
+            return HttpResponseRedirect(reverse('main'))
 
-    elif requests.user.is_authenticated and requests.user.is_superuser:
+        else:
 
-        # load template
-        edit_temp = loader.get_template("InstaPay/Edit_Product.html")
+            username = requests.user.username
 
-        # we add user's username to form
-        context = {
+            # check user have access to change product information or not
+            if username == product_list_objects[0].bloger.page_name or requests.user.is_superuser:
 
-            "hidden_state": False,
+                # return product value
+                context = {
 
-        }
+                    "product": product_list_objects[0]
+
+                }
+
+                # get template
+                edit_form = loader.get_template('InstaPay/Edit_Product.html')
+
+                return HttpResponse(edit_form.render(context))
+
+            else:
+
+                # return main page
+                return HttpResponseRedirect(reverse('main'))
 
 
-def edit_product(requests, product_hashcode):
-    pass
+@csrf_exempt
+def edit_product(requests):
+
+    """
+    edit product
+    """
+
+    # only user can change product information
+    if not requests.user.is_authenticated:
+
+        # return to main page
+        return HttpResponseRedirect(reverse('main'))
+
+    else:
+
+        request_inf = requests.POST
+        username = requests.user.username
+
+        product_objects_list = models.Product.objects.all().filter(product_hashcode=request_inf['product_hashcode'])
+
+        if len(product_objects_list) == 0:
+
+            # return to product list
+            return HttpResponseRedirect(reverse('Product_List'))
+
+        else:
+
+            # check user have access or not
+            prod = product_objects_list[0]
+
+            if prod.bloger.page_name == username or requests.user.is_superuser:
+
+                # have access
+
+                # update information
+                prod.name = request_inf['name']
+                prod.price = request_inf['price']
+                prod.description = request_inf['description']
+                prod.number = request_inf['number']
+                prod.off_code = request_inf['off_code']
+                prod.off_code_deadline = request_inf['off_code_deadline']
+                prod.category = request_inf['category']
+
+                purchase_state = True if request_inf["purchase_state"] == "True" else False
+
+                try:
+                    x = request_inf['purchase_state_change']
+                    purchase_state = not purchase_state
+                except:
+                    pass
+
+                prod.purchase_state = purchase_state
+
+                # save change's
+                prod.save()
+
+                return HttpResponseRedirect(reverse('Product_List'))
+
+            else:
+
+                # return to main page because don't have access
+                return HttpResponseRedirect(reverse('main'))
 
 
 def delete_product(requests, product_hashcode):
-    pass
+
+    """
+    delete product
+    """
+
+    # only user can change
+    if not requests.user.is_authenticated:
+
+        # return to main page
+        return HttpResponseRedirect(reverse('main'))
+
+    else:
+
+        username = requests.user.username
+
+        product_objects_list = models.Product.objects.all().filter(product_hashcode=product_hashcode)
+
+        if len(product_objects_list) == 0:
+
+            # return to product list
+            return HttpResponseRedirect(reverse('Product_List'))
+
+        else:
+
+            # check user have access or not
+            prod = product_objects_list[0]
+
+            if prod.bloger.page_name == username or requests.user.is_superuser:
+
+                # delete object
+                prod.delete()
+
+                return HttpResponseRedirect(reverse('Product_List'))
+
+            else:
+
+                # return to main page
+                return HttpResponseRedirect(reverse('main'))
 
 
 def product_buy(requests, product_hashcode):
-    pass
+    return HttpResponse("buy == "+str(product_hashcode))
