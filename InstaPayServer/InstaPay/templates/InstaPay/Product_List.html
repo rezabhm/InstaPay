@@ -74,7 +74,7 @@
         {% if super_user %}
 
         <td>
-            {{ prod.bloger.page_name }}
+            <a href="{% url 'Product_List_Admin' page_name=prod.bloger.page_name %}">{{ prod.bloger.page_name }}</a>
 
         </td>
 

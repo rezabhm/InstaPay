@@ -772,7 +772,6 @@ def product_list(requests):
 
         if len(prod_list) > 0:
 
-
             cont = {
 
                 "prod_len": True,
@@ -783,7 +782,6 @@ def product_list(requests):
 
         else:
 
-
             cont = {
 
                 "prod_len": False,
@@ -792,7 +790,6 @@ def product_list(requests):
 
             }
 
-
         # load template
         prod_list_temp = loader.get_template("InstaPay/Product_List.html")
 
@@ -800,6 +797,48 @@ def product_list(requests):
 
     else:
 
+        return HttpResponseRedirect(reverse('main'))
+
+
+def product_list_admin(requests, page_name):
+
+    """
+    return all of user's product
+    """
+
+    if requests.user.is_authenticated and requests.user.is_superuser:
+
+        # get product list
+        prod_list = models.Product.objects.all().filter(bloger__page_name=page_name)
+
+        if len(prod_list) > 0:
+
+            context = {
+
+                "prod_len": True,
+                'prod_list': prod_list,
+                "super_user": True
+
+            }
+
+        else:
+
+            context = {
+
+                "prod_len": False,
+                'prod_list': prod_list,
+                "super_user": True
+
+            }
+
+        # load template
+        prod_list_temp = loader.get_template("InstaPay/Product_List.html")
+
+        return HttpResponse(prod_list_temp.render(context))
+
+    else:
+
+        # redirect to main page
         return HttpResponseRedirect(reverse('main'))
 
 
@@ -955,5 +994,37 @@ def delete_product(requests, product_hashcode):
                 return HttpResponseRedirect(reverse('main'))
 
 
+def factor_list(requests, product_hashcode):
+
+    """
+    return all of product's factor
+    """
+
+    if requests.user.is_authenticated and not requests.user.is_superuser:
+
+        # return factor list
+        # get factor list
+
+        factor_objects_list = models.Factor.objects.all().filter(product__product_hashcode=)
+
+
+
+    else:
+
+        # redirect to main page
+        return HttpResponseRedirect(reverse('main'))
+
+
 def product_buy(requests, product_hashcode):
-    return HttpResponse("buy == "+str(product_hashcode))
+
+    return HttpResponse("buy product" + str(product_hashcode))
+
+
+def create_factor(requests, product_hashcode):
+
+    return HttpResponse("create product" + str(product_hashcode))
+
+
+def verify_factor(requests, product_hashcode):
+
+    return HttpResponse("verify product" + str(product_hashcode))
