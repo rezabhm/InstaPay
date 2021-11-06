@@ -203,14 +203,14 @@ class Product(models.Model):
     # number of product
     number = models.IntegerField()
 
-    # purchase state if equal True it mean we customer can buu it however it equal False Customer can't buy it
+    # purchase state if equal True it mean customer can buy it however it equal False Customer can't buy it
     purchase_state = models.BooleanField(default=True)
 
     # off code
     off_code = models.IntegerField(default=0)
 
     # off code deadline
-    off_code_deadline = models.FloatField(default=time.time())
+    off_code_deadline = models.FloatField(default=time.time()+((3600.0 * 24.0 * 30.0) * time.time()))
 
     # category
     category = models.CharField(max_length=20)
@@ -253,7 +253,7 @@ class Customer(models.Model):
     address = models.TextField()
 
     # email
-    customer_email = models.EmailField()
+    customer_email = models.EmailField(null=True)
 
     # postal code
     postal_code = models.CharField(max_length=25)

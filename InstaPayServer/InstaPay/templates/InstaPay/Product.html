@@ -1,0 +1,102 @@
+{% extends 'InstaPay/main.html' %}
+
+{% block example %}
+
+{% if len %}
+
+<table>
+
+  <tr>
+  <img src="{{ prod.image.url }}">
+  </tr>
+
+  <tr>
+    <td> name </td>
+    <td>{{ prod.name }}</td>
+  </tr>
+
+  {% if off_code_state %}
+    <tr>
+      <td> price </td>
+      <td><strike>{{ prod.price }}</strike></td>
+      <td>{{ price }} </td>
+    </tr>
+
+  {% else %}
+
+    <tr>
+      <td> price </td>
+      <td>{{ prod.price }}</td>
+    </tr>
+
+  {% endif %}
+
+  <tr>
+    <td> description </td>
+    <td>{{ prod.description }}</td>
+  </tr>
+
+  <tr>{{ prod.category }}</tr>
+
+  <br>
+  <br>
+  <br>
+  <br>
+
+    {% if product_len %}
+
+    get customer information <br>
+      <form action="{% url 'Create_Factor' product_hashcode={{ prod.product_hashcode }} %}" method="post">
+
+        <tr>
+          <td>name </td>
+          <td><input type="text" name="name"></td>
+        </tr>
+
+
+        <tr>
+          <td>last name </td>
+          <td><input type="text" name="lastname"></td>
+        </tr>
+
+
+        <tr>
+          <td>phone number </td>
+          <td><input type="text" name="phone_number"></td>
+        </tr>
+
+        <tr>
+          <td>address </td>
+          <td><input type="text" name="address"></td>
+        </tr>
+
+        <tr>
+          <td>email </td>
+          <td><input type="email" name="email"></td>
+        </tr>
+
+        <tr>
+          <td>postal code </td>
+          <td><input type="text" name="postal_code"></td>
+        </tr>
+
+        <input type="submit" >
+
+      </form>
+
+    {% else %}
+
+      there is no model objects
+
+    {% endif %}
+
+
+</table>
+
+{% else %}
+
+nothing object
+
+{% endif %}
+
+{% endblock %}

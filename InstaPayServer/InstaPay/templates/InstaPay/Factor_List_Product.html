@@ -1,0 +1,135 @@
+{% extends 'InstaPay/main.html' %}
+
+{% block example %}
+
+{% if len %}
+<table>
+    <thead>
+
+    <th>
+
+    {% if superuser %}
+
+        <td> page name </td>
+    {% endif %}
+
+    <td>  product name </td>
+
+    <td>
+        factor id
+
+    </td>
+
+    <td>
+        date
+    </td>
+
+
+    <td>
+        hours
+    </td>
+
+    <td>
+        ordering statement
+    </td>
+
+
+    <td>
+        payment statement
+    </td>
+
+
+    <td>
+        price
+    </td>
+
+
+    <td>
+        number of product
+    </td>
+
+
+    <td>
+        delivery date
+    </td>
+
+
+    <td>
+        delivery hour
+    </td>
+
+
+    <td>
+        payment date
+    </td>
+
+
+    <td>
+        payment hours
+    </td>
+
+
+    <td>
+        bloger payment bank
+    </td>
+
+
+    <td>
+        bloger payment serial
+    </td>
+
+
+    <td>
+        off code
+    </td>
+
+
+    <td>
+        off code using
+    </td>
+
+
+    </th>
+
+    </thead>
+
+
+    <tr>
+
+        {% for fact in factor %}
+
+        {% if superuser %}
+
+        <td>{{ fact.bloger.page_name }}</td>
+
+        {% endif %}
+
+        <td> {{ fact.product.name }} </td>
+        <td> {{ fact.id }} </td>
+        <td>{{ fact.customer_payment_year  }}/{{ fact.customer_payment_month }}/{{ fact.customer_payment_day }}</td>
+        <td>{{ fact.customer_payment_hours }}:{{ fact.customer_payment_minutes }}</td>
+        <td>{{ fact.factor_statement_ordering_factor }}</td>
+        <td>{{ fact.factor_statement_payment_to_bloger }}</td>
+        <td>{{ fact.price }}</td>
+        <td>{{ fact.number_of_product }}</td>
+        <td>{{ fact.delivery_year }}/{{ fact.delivery_month }}/{{ fact.delivery_day }}</td>
+        <td>{{ fact.delivery_hours }}:{{ fact.delivery_minutes }}</td>
+        <td>{{ fact.bloger_payment_year }}/{{ fact.bloger_payment_month }}/{{ fact.bloger_payment_day }}</td>
+        <td>{{ fact.bloger_payment_hours }}:{{ fact.bloger_payment_minutes }}</td>
+        <td>{{ fact.bloger_payment_bank }}</td>
+        <td>{{ fact.bloger_payment_serial }}</td>
+        <td>{{ fact.off_code.off_number }}</td>
+        <td>{{ fact.off_code.using }}</td>
+
+        {% endfor %}
+
+    </tr>
+
+</table>
+
+{% else %}
+
+there is no item
+
+{% endif %}
+{% endblock %}

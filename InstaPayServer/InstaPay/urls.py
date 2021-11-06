@@ -124,11 +124,28 @@ urlpatterns = [
     re_path(r'^product/edit/form/(?P<product_hashcode>[0-9]{11})/$', views.edit_product_form, name='Edit_Product_Form'),
     re_path(r'^product/delete/(?P<product_hashcode>[0-9]{11})/$', views.delete_product, name="Delete_Product"),
 
-    # factor url
+    # product factor url
 
     re_path(r'^factor/list/(?P<product_hashcode>[0-9]{11})/$', views.factor_list, name="Factor_List"),
-    re_path(r'^factor/list/(?P<product_hashcode>[0-9]{11})/(?P<page_name>)$', views.factor_list_admin,
-            name="Factor_List_Admin"),
+    re_path(r'^factor/list/ordering/(?P<ordering_state>)[0-1]{1}/(?P<product_hashcode>[0-9]{11})/$',
+            views.factor_list_ordering, name="Factor_List_Ordering"),
+    re_path(r'^factor/list/bloger/payment/(?P<payment_state>)[0-1]{1}/(?P<product_hashcode>[0-9]{11})/$',
+            views.factor_list_payment_to_bloger, name="Factor_List_Payment_To_Bloger"),
+
+    # factor url
+
+    re_path(r'^factor/list/$', views.factor, name="Factor"),
+    re_path(r'^factor/list/ordering/(?P<ordering_state>[0-1]{1})/$', views.factor_ordering, name="Factor_ordering"),
+    re_path(r'^factor/list/bloger/payment/(?P<payment_state>[0-1]{1})/$', views.factor_ordering,
+            name="Factor_Payment_To_Bloger"),
+
+    # change factor statement
+
+    re_path(r'^factor/change/ordering/statement/(?P<factor_id>[0-9]+)/$', views.change_ordering,
+            name='Change_Factor_Order_Statement'),
+
+    re_path(r'^factor/change/payment/statement/(?P<factor_id>[0-9]+)/$', views.change_payment,
+            name='Change_Factor_Payment_Statement'),
 
     # buy product url
 

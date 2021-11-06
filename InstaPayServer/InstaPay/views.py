@@ -1005,9 +1005,70 @@ def factor_list(requests, product_hashcode):
         # return factor list
         # get factor list
 
-        factor_objects_list = models.Factor.objects.all().filter(product__product_hashcode=)
+        factor_objects_list = models.Factor.objects.all().filter(product__product_hashcode=product_hashcode)
 
+        if len(factor_objects_list) > 0:
 
+            if requests.user.username == factor_objects_list[0].bloger.page_name:
+                context = {
+
+                    "len": True,
+                    "superuser": True,
+                    "factor": factor_objects_list
+
+                }
+
+            else:
+
+                # redirect main page
+                return HttpResponseRedirect(reverse('main'))
+
+        else:
+
+            context = {
+
+                "len": False,
+                "superuser": False,
+                "factor": factor_objects_list
+
+            }
+
+        # get template
+        factor_list_temp = loader.get_template("InstaPay/Factor_List_Product.html")
+
+        return HttpResponse(factor_list_temp.render(context))
+
+    elif requests.user.is_authenticated and requests.user.is_superuser:
+
+        # return factor list
+        # get factor list
+
+        factor_objects_list = models.Factor.objects.all().filter(product__product_hashcode=product_hashcode)
+
+        if len(factor_objects_list) > 0:
+
+            context = {
+
+                "len": True,
+                "superuser": True,
+                "factor": factor_objects_list
+
+            }
+
+        else:
+
+            context = {
+
+                "len": False,
+                "superuser": True,
+                "factor": factor_objects_list
+
+            }
+
+        # get template
+        factor_list_temp = loader.get_template("InstaPay/Factor_List_Product.html")
+
+        return HttpResponse(factor_list_temp.render(context))
 
     else:
 
@@ -1015,14 +1076,700 @@ def factor_list(requests, product_hashcode):
         return HttpResponseRedirect(reverse('main'))
 
 
+def factor_list_ordering(requests, product_hashcode, ordering_state):
+
+    """
+    show ordering factor
+    """
+
+    ordering_state = True if str(ordering_state) == '1' else False
+
+    if requests.user.is_authenticated and not requests.user.is_superuser:
+
+        # return factor list
+        # get factor list
+
+        factor_objects_list = models.Factor.objects.all().filter(product__product_hashcode=product_hashcode).filter(
+            factor_statement_ordering_factor=ordering_state)
+
+        if len(factor_objects_list) > 0:
+
+            if requests.user.username == factor_objects_list[0].bloger.page_name:
+                context = {
+
+                    "len": True,
+                    "superuser": True,
+                    "factor": factor_objects_list
+
+                }
+
+            else:
+
+                # redirect main page
+                return HttpResponseRedirect(reverse('main'))
+
+        else:
+
+            context = {
+
+                "len": False,
+                "superuser": False,
+                "factor": factor_objects_list
+
+            }
+
+        # get template
+        factor_list_temp = loader.get_template("InstaPay/Factor_List_Product.html")
+
+        return HttpResponse(factor_list_temp.render(context))
+
+    elif requests.user.is_authenticated and requests.user.is_superuser:
+
+        # return factor list
+        # get factor list
+
+        factor_objects_list = models.Factor.objects.all().filter(product__product_hashcode=product_hashcode).filter(
+            factor_statement_ordering_factor=ordering_state)
+
+        if len(factor_objects_list) > 0:
+
+            context = {
+
+                "len": True,
+                "superuser": True,
+                "factor": factor_objects_list
+
+            }
+
+        else:
+
+            context = {
+
+                "len": False,
+                "superuser": True,
+                "factor": factor_objects_list
+
+            }
+
+        # get template
+        factor_list_temp = loader.get_template("InstaPay/Factor_List_Product.html")
+
+        return HttpResponse(factor_list_temp.render(context))
+
+    else:
+
+        # redirect to main page
+        return HttpResponseRedirect(reverse('main'))
+
+
+def factor_list_payment_to_bloger(requests, product_hashcode, payment_state=1):
+
+    """
+    show all of product's payment factor
+    """
+
+    payment_state = True if str(payment_state) == '1' else False
+
+    if requests.user.is_authenticated and not requests.user.is_superuser:
+
+        # return factor list
+        # get factor list
+
+        factor_objects_list = models.Factor.objects.all().filter(product__product_hashcode=product_hashcode).filter(
+            factor_statement_payment_to_bloger=payment_state)
+
+        if len(factor_objects_list) > 0:
+
+            if requests.user.username == factor_objects_list[0].bloger.page_name:
+                context = {
+
+                    "len": True,
+                    "superuser": True,
+                    "factor": factor_objects_list
+
+                }
+
+            else:
+
+                # redirect main page
+                return HttpResponseRedirect(reverse('main'))
+
+        else:
+
+            context = {
+
+                "len": False,
+                "superuser": False,
+                "factor": factor_objects_list
+
+            }
+
+        # get template
+        factor_list_temp = loader.get_template("InstaPay/Factor_List_Product.html")
+
+        return HttpResponse(factor_list_temp.render(context))
+
+    elif requests.user.is_authenticated and requests.user.is_superuser:
+
+        # return factor list
+        # get factor list
+
+        factor_objects_list = models.Factor.objects.all().filter(product__product_hashcode=product_hashcode).filter(
+            factor_statement_payment_to_bloger=payment_state)
+
+        if len(factor_objects_list) > 0:
+
+            context = {
+
+                "len": True,
+                "superuser": True,
+                "factor": factor_objects_list
+
+            }
+
+        else:
+
+            context = {
+
+                "len": False,
+                "superuser": True,
+                "factor": factor_objects_list
+
+            }
+
+        # get template
+        factor_list_temp = loader.get_template("InstaPay/Factor_List_Product.html")
+
+        return HttpResponse(factor_list_temp.render(context))
+
+    else:
+
+        # redirect to main page
+        return HttpResponseRedirect(reverse('main'))
+
+
+def factor(requests):
+
+    """
+    return all of factor
+    """
+
+    if requests.user.is_authenticated and not requests.user.is_superuser:
+
+        # return factor list
+        # get factor list
+
+        factor_objects_list = models.Factor.objects.all().filter(bloger__page_name=requests.user.username)
+
+        if len(factor_objects_list) > 0:
+
+            if requests.user.username == factor_objects_list[0].bloger.page_name:
+                context = {
+
+                    "len": True,
+                    "superuser": True,
+                    "factor": factor_objects_list
+
+                }
+
+            else:
+
+                # redirect main page
+                return HttpResponseRedirect(reverse('main'))
+
+        else:
+
+            context = {
+
+                "len": False,
+                "superuser": False,
+                "factor": factor_objects_list
+
+            }
+
+        # get template
+        factor_list_temp = loader.get_template("InstaPay/Factor_List_Product.html")
+
+        return HttpResponse(factor_list_temp.render(context))
+
+    elif requests.user.is_authenticated and requests.user.is_superuser:
+
+        # return factor list
+        # get factor list
+
+        factor_objects_list = models.Factor.objects.all()
+
+        if len(factor_objects_list) > 0:
+
+            context = {
+
+                "len": True,
+                "superuser": True,
+                "factor": factor_objects_list
+
+            }
+
+        else:
+
+            context = {
+
+                "len": False,
+                "superuser": True,
+                "factor": factor_objects_list
+
+            }
+
+        # get template
+        factor_list_temp = loader.get_template("InstaPay/Factor_List_Product.html")
+
+        return HttpResponse(factor_list_temp.render(context))
+
+    else:
+
+        # redirect to main page
+        return HttpResponseRedirect(reverse('main'))
+
+
+def factor_ordering(requests, ordering_state):
+
+    """
+    return all of factor
+    """
+
+    ordering_state = True if str(ordering_state) == "1" else False
+
+    if requests.user.is_authenticated and not requests.user.is_superuser:
+
+        # return factor list
+        # get factor list
+
+        factor_objects_list = models.Factor.objects.all().filter(bloger__page_name=requests.user.username).filter(
+            factor_statement_ordering_factor=ordering_state)
+
+        if len(factor_objects_list) > 0:
+
+            if requests.user.username == factor_objects_list[0].bloger.page_name:
+                context = {
+
+                    "len": True,
+                    "superuser": True,
+                    "factor": factor_objects_list
+
+                }
+
+            else:
+
+                # redirect main page
+                return HttpResponseRedirect(reverse('main'))
+
+        else:
+
+            context = {
+
+                "len": False,
+                "superuser": False,
+                "factor": factor_objects_list
+
+            }
+
+        # get template
+        factor_list_temp = loader.get_template("InstaPay/Factor_List_Product.html")
+
+        return HttpResponse(factor_list_temp.render(context))
+
+    elif requests.user.is_authenticated and requests.user.is_superuser:
+
+        # return factor list
+        # get factor list
+
+        factor_objects_list = models.Factor.objects.all().filter(
+            factor_statement_ordering_factor=ordering_state)
+
+        if len(factor_objects_list) > 0:
+
+            context = {
+
+                "len": True,
+                "superuser": True,
+                "factor": factor_objects_list
+
+            }
+
+        else:
+
+            context = {
+
+                "len": False,
+                "superuser": True,
+                "factor": factor_objects_list
+
+            }
+
+        # get template
+        factor_list_temp = loader.get_template("InstaPay/Factor_List_Product.html")
+
+        return HttpResponse(factor_list_temp.render(context))
+
+    else:
+
+        # redirect to main page
+        return HttpResponseRedirect(reverse('main'))
+
+
+def factor_bloger_payment(requests, payment_state):
+
+    """
+    return all of payment factor
+    """
+
+    payment_state = True if str(payment_state) == "1" else False
+
+    if requests.user.is_authenticated and not requests.user.is_superuser:
+
+        # return factor list
+        # get factor list
+
+        factor_objects_list = models.Factor.objects.all().filter(bloger__page_name=requests.user.username).filter(
+            factor_statement_payment_to_bloger=payment_state)
+
+        if len(factor_objects_list) > 0:
+
+            if requests.user.username == factor_objects_list[0].bloger.page_name:
+                context = {
+
+                    "len": True,
+                    "superuser": True,
+                    "factor": factor_objects_list
+
+                }
+
+            else:
+
+                # redirect main page
+                return HttpResponseRedirect(reverse('main'))
+
+        else:
+
+            context = {
+
+                "len": False,
+                "superuser": False,
+                "factor": factor_objects_list
+
+            }
+
+        # get template
+        factor_list_temp = loader.get_template("InstaPay/Factor_List_Product.html")
+
+        return HttpResponse(factor_list_temp.render(context))
+
+    elif requests.user.is_authenticated and requests.user.is_superuser:
+
+        # return factor list
+        # get factor list
+
+        factor_objects_list = models.Factor.objects.all().filter(bloger__page_name=requests.user.username).filter(
+            factor_statement_payment_to_bloger=payment_state)
+
+        if len(factor_objects_list) > 0:
+
+            context = {
+
+                "len": True,
+                "superuser": True,
+                "factor": factor_objects_list
+
+            }
+
+        else:
+
+            context = {
+
+                "len": False,
+                "superuser": True,
+                "factor": factor_objects_list
+
+            }
+
+        # get template
+        factor_list_temp = loader.get_template("InstaPay/Factor_List_Product.html")
+
+        return HttpResponse(factor_list_temp.render(context))
+
+    else:
+
+        # redirect to main page
+        return HttpResponseRedirect(reverse('main'))
+
+
+def change_ordering(requests, factor_id):
+
+    """
+    change factor ordering statement
+    """
+
+    if requests.user.is_authenticated and requests.user.is_superuser:
+
+        # get factor list
+        factor_objects_list_id = models.Factor.objects.all().filter(factor_id=int(factor_id))
+
+        if len(factor_objects_list_id) > 0:
+
+            # get factor
+            fact = factor_objects_list_id[0]
+
+            month_dict = {
+
+                "Jan": 1,
+                "Feb": 2,
+                "Mar": 3,
+                "Apr": 4,
+                "May": 5,
+                "Jun": 6,
+                "Jul": 7,
+                "Aug": 8,
+                "Sep": 9,
+                "Nov": 10,
+                "Dec": 11,
+                "Oct": 12,
+
+            }
+
+            if not fact.factor_statement_ordering_factor:
+
+                change_time = time.ctime(time.time()).split(" ")
+
+                fact.delivery_year = int(change_time[-1])
+                fact.delivery_month = month_dict[change_time[1]]
+                fact.delivery_day = int(change_time[2])
+                fact.delivery_hours = int(change_time[3].split(':')[0])
+                fact.delivery_minutes = int(change_time[3].split(':')[1])
+
+            # change factor ordering statement
+            fact.factor_statement_ordering_factor = not fact.factor_statement_ordering_factor
+
+            fact.save()
+
+        return HttpResponseRedirect(reverse('main'))
+
+    elif requests.user.is_authenticated and not requests.user.is_superuser:
+
+        # get factor list
+        factor_objects_list_id = models.Factor.objects.all().filter(factor_id=int(factor_id)).filter(
+            bloger__page_name=requests.user.username)
+
+        if len(factor_objects_list_id) > 0:
+
+            # get factor
+            fact = factor_objects_list_id[0]
+
+            month_dict = {
+
+                "Jan": 1,
+                "Feb": 2,
+                "Mar": 3,
+                "Apr": 4,
+                "May": 5,
+                "Jun": 6,
+                "Jul": 7,
+                "Aug": 8,
+                "Sep": 9,
+                "Nov": 10,
+                "Dec": 11,
+                "Oct": 12,
+
+            }
+
+            if not fact.factor_statement_ordering_factor:
+                change_time = time.ctime(time.time()).split(" ")
+
+                fact.delivery_year = int(change_time[-1])
+                fact.delivery_month = month_dict[change_time[1]]
+                fact.delivery_day = int(change_time[2])
+                fact.delivery_hours = int(change_time[3].split(':')[0])
+                fact.delivery_minutes = int(change_time[3].split(':')[1])
+
+            # change factor ordering statement
+            fact.factor_statement_ordering_factor = not fact.factor_statement_ordering_factor
+
+            fact.save()
+
+        return HttpResponseRedirect(reverse('main'))
+
+    else:
+
+        return HttpResponseRedirect(reverse('main'))
+
+
+def change_payment(requests, factor_id):
+    """
+    change factor ordering statement
+    """
+
+    if requests.user.is_authenticated and requests.user.is_superuser:
+
+        # get factor list
+        factor_objects_list_id = models.Factor.objects.all().filter(factor_id=int(factor_id))
+
+        if len(factor_objects_list_id) > 0:
+
+            # get factor
+            fact = factor_objects_list_id[0]
+
+            month_dict = {
+
+                "Jan": 1,
+                "Feb": 2,
+                "Mar": 3,
+                "Apr": 4,
+                "May": 5,
+                "Jun": 6,
+                "Jul": 7,
+                "Aug": 8,
+                "Sep": 9,
+                "Nov": 10,
+                "Dec": 11,
+                "Oct": 12,
+
+            }
+
+            change_time = time.ctime(time.time()).split(" ")
+
+            fact.bloger_payment_year = int(change_time[-1])
+            fact.bloger_payment_month = month_dict[change_time[1]]
+            fact.bloger_payment_day = int(change_time[2])
+            fact.bloger_payment_hours = int(change_time[3].split(':')[0])
+            fact.bloger_payment_minutes = int(change_time[3].split(':')[1])
+
+            # change factor ordering statement
+            fact.factor_statement_payment_to_bloger = not fact.factor_statement_payment_to_bloger
+
+            fact.save()
+
+        return HttpResponseRedirect(reverse('main'))
+
+    elif requests.user.is_authenticated and not requests.user.is_superuser:
+
+        # get factor list
+        factor_objects_list_id = models.Factor.objects.all().filter(factor_id=int(factor_id)).filter(
+            bloger__page_name=requests.user.username)
+
+        if len(factor_objects_list_id) > 0:
+
+            # get factor
+            fact = factor_objects_list_id[0]
+
+            month_dict = {
+
+                "Jan": 1,
+                "Feb": 2,
+                "Mar": 3,
+                "Apr": 4,
+                "May": 5,
+                "Jun": 6,
+                "Jul": 7,
+                "Aug": 8,
+                "Sep": 9,
+                "Nov": 10,
+                "Dec": 11,
+                "Oct": 12,
+
+            }
+
+            change_time = time.ctime(time.time()).split(" ")
+
+            fact.bloger_payment_year = int(change_time[-1])
+            fact.bloger_payment_month = month_dict[change_time[1]]
+            fact.bloger_payment_day = int(change_time[2])
+            fact.bloger_payment_hours = int(change_time[3].split(':')[0])
+            fact.bloger_payment_minutes = int(change_time[3].split(':')[1])
+
+            # change factor ordering statement
+            fact.factor_statement_payment_to_bloger = not fact.factor_statement_payment_to_bloger
+
+            fact.save()
+
+        return HttpResponseRedirect(reverse('main'))
+
+    else:
+
+        return HttpResponseRedirect(reverse('main'))
+
+
 def product_buy(requests, product_hashcode):
 
-    return HttpResponse("buy product" + str(product_hashcode))
+    """
+    show product information redirect to buy product
+    """
+
+    # get product objects
+    product_objects_list = models.Product.objects.all().filter(product_hashcode=product_hashcode)
+
+    if len(product_hashcode) > 0:
+
+        current_time = time.time()
+        off_time = product_objects_list[0].off_code_deadline
+
+        if off_time - current_time > 0:
+
+            off_code_state = True
+            price = product_objects_list[0].price * (1 - (product_objects_list[0].off_code / 100))
+
+        else:
+
+            off_code_state = False
+
+        if product_objects_list[0].number >= 1 and product_objects_list[0].purchase_state:
+
+            # product exist and we must return product's information
+            context = {
+
+                "prod": product_objects_list[0],
+                "len": True,
+                "product_len": True,
+                "off_code_state": off_code_state,
+                "off_price": price
+
+            }
+
+        else:
+
+            # we don't have product
+            context = {
+
+                "prod": product_objects_list[0],
+                "len": True,
+                "product_len": False,
+                "off_code_state": off_code_state
+
+            }
+
+        # get product template
+        product_temp = loader.get_template('InstaPay/Product.html')
+
+        return HttpResponse(product_temp.render(context))
+
+    else:
+
+        # there is no product
+        context = {
+
+            "len": False
+
+        }
+
+        product_temp = loader.get_template('InstaPay/Product.html')
+
+        return HttpResponse(product_temp.render(context))
 
 
 def create_factor(requests, product_hashcode):
 
-    return HttpResponse("create product" + str(product_hashcode))
+    """
+    create factor and create bank getway token for buy
+    """
+
+    return HttpResponse("create factor product" + str(product_hashcode))
 
 
 def verify_factor(requests, product_hashcode):
