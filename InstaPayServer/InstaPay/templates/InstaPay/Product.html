@@ -46,7 +46,10 @@
     {% if product_len %}
 
     get customer information <br>
-      <form action="{% url 'Create_Factor' product_hashcode={{ prod.product_hashcode }} %}" method="post">
+      <form action="{% url 'Create_Factor' product_hashcode=prod.product_hashcode %}" method="post">
+
+        <input type="hidden" value="{{ prod.product_hashcode }}" name="product_hashcode" >
+        <input type="hidden" value="{{ price }}" name="price" >
 
         <tr>
           <td>name </td>
@@ -80,8 +83,15 @@
           <td><input type="text" name="postal_code"></td>
         </tr>
 
-        <input type="submit" >
 
+        <tr>
+          <td> number of product</td>
+          <td><input type="number" value="1" name="number_of_product"></td>
+        </tr>
+
+        <tr>
+        <input type="submit" >
+        </tr>
       </form>
 
     {% else %}

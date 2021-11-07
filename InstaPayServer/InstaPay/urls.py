@@ -121,15 +121,15 @@ urlpatterns = [
     re_path(r'^product/list/$', views.product_list, name="Product_List"),
     re_path(r'^product/list/(?P<page_name>)/$', views.product_list_admin, name="Product_List_Admin"),
     re_path(r'^product/edit/$', views.edit_product, name='Edit_Product'),
-    re_path(r'^product/edit/form/(?P<product_hashcode>[0-9]{11})/$', views.edit_product_form, name='Edit_Product_Form'),
-    re_path(r'^product/delete/(?P<product_hashcode>[0-9]{11})/$', views.delete_product, name="Delete_Product"),
+    re_path(r'^product/edit/form/(?P<product_hashcode>[0-9]{11,13})/$', views.edit_product_form, name='Edit_Product_Form'),
+    re_path(r'^product/delete/(?P<product_hashcode>[0-9]{11,13})/$', views.delete_product, name="Delete_Product"),
 
     # product factor url
 
-    re_path(r'^factor/list/(?P<product_hashcode>[0-9]{11})/$', views.factor_list, name="Factor_List"),
-    re_path(r'^factor/list/ordering/(?P<ordering_state>)[0-1]{1}/(?P<product_hashcode>[0-9]{11})/$',
+    re_path(r'^factor/list/(?P<product_hashcode>[0-9]{11,13})/$', views.factor_list, name="Factor_List"),
+    re_path(r'^factor/list/ordering/(?P<ordering_state>)[0-1]{1}/(?P<product_hashcode>[0-9]{11,13})/$',
             views.factor_list_ordering, name="Factor_List_Ordering"),
-    re_path(r'^factor/list/bloger/payment/(?P<payment_state>)[0-1]{1}/(?P<product_hashcode>[0-9]{11})/$',
+    re_path(r'^factor/list/bloger/payment/(?P<payment_state>)[0-1]{1}/(?P<product_hashcode>[0-9]{11,13})/$',
             views.factor_list_payment_to_bloger, name="Factor_List_Payment_To_Bloger"),
 
     # factor url
@@ -149,8 +149,8 @@ urlpatterns = [
 
     # buy product url
 
-    re_path(r'^(?P<product_hashcode>[0-9]{11})/$', views.product_buy, name="Product_Buy"),
-    re_path(r'^(?P<product_hashcode>[0-9]{11})/Factor/Form/$', views.create_factor, name="Create_Factor"),
-    re_path(r'^(?P<product_hashcode>[0-9]{11})/Verify/$', views.verify_factor, name="Verify_Factor"),
+    re_path(r'^(?P<product_hashcode>[0-9]{11,13})/$', views.product_buy, name="Product_Buy"),
+    re_path(r'^(?P<product_hashcode>[0-9]{11,13})/Factor/Form/$', views.create_factor, name="Create_Factor"),
+    re_path(r'^(?P<product_hashcode>[0-9]{11,13})/Verify/$', views.verify_factor, name="Verify_Factor"),
 
 ]

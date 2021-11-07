@@ -1718,6 +1718,7 @@ def product_buy(requests, product_hashcode):
         else:
 
             off_code_state = False
+            price = product_objects_list[0].price
 
         if product_objects_list[0].number >= 1 and product_objects_list[0].purchase_state:
 
@@ -1740,7 +1741,8 @@ def product_buy(requests, product_hashcode):
                 "prod": product_objects_list[0],
                 "len": True,
                 "product_len": False,
-                "off_code_state": off_code_state
+                "off_code_state": off_code_state,
+                "off_price": price
 
             }
 
