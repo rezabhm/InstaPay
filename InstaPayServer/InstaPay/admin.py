@@ -75,3 +75,37 @@ class OffCodeAdmin(admin.ModelAdmin):
         ("relation", {"fields": ("bloger", "product", "customer")})
 
     )
+
+
+@admin.register(models.Pending)
+class PendingAdmin(admin.ModelAdmin):
+
+    fieldsets = (
+
+        ('information', {'fields': ('amount', 'merchantID', 'pending_time', 'cellNUM', 'bank')}),
+        ('relation', {'fields': ('factor',)})
+
+    )
+
+
+@admin.register(models.SamanPending)
+class SamanPendingAdmin(admin.ModelAdmin):
+
+    fieldsets = (
+
+        ('information', {'fields': ('terminalID', 'pendingID', 'multiplex_shaba')}),
+        ('relation', {'fields': ('pending',)})
+
+    )
+
+
+@admin.register(models.SadadPending)
+class SadadPendingAdmin(admin.ModelAdmin):
+
+    fieldsets = (
+
+        ('information', {'fields': ('terminalID', 'pendingID', 'signData', 'multiplex_shaba', 'token', 'resCode',
+                                    'description')}),
+        ('relation', {'fields': ('pending',)})
+
+    )

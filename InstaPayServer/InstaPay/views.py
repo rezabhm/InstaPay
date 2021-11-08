@@ -1768,7 +1768,7 @@ def product_buy(requests, product_hashcode):
 def create_factor(requests, product_hashcode):
 
     """
-    create factor and create bank getway token for buy
+    create factor and create bank gateway token for buy
     """
 
     return HttpResponse("create factor product" + str(product_hashcode))

@@ -403,6 +403,126 @@ class Factor(models.Model):
         return str(self.factor_id)
 
 
+class Pending(models.Model):
+
+    """
+    pending database for storing all of gateway's pending data
+
+    column name :
+
+        1) amount
+        2) merchantID
+        3) pending time
+        4) cellNum
+        5) bank
+
+    relation :
+
+        1) factor ==> OneToOne
+
+    """
+
+    # factor price
+    amount = models.IntegerField()
+
+    # merchantID that given from bank
+    merchantID = models.CharField(max_length=50)
+
+    # pending time
+    pending_time = models.FloatField(default=time.time())
+
+    # customer phone number
+    cellNUM = models.CharField(max_length=15)
+
+    # bank name
+    bank = models.CharField(max_length=25)
+
+    # relation
+    factor = models.OneToOneField(Factor, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return str(self.cellNUM)
+
+
+class SamanPending(models.Model):
+
+    """
+    Database for storing payment pending for Saman bank
+
+    column name :
+
+        1) terminalID
+        2) pendingID
+        3) multiplex shaba
+
+    relation :
+
+        1) pending  ==> Foreign
+
+    """
+
+    # terminal ID that given from bank
+    terminalID = models.CharField(max_length=50)
+
+    # pending id that we must build it for every transaction
+    pendingID = models.CharField(max_length=25)
+
+    # bloger shaba
+    multiplex_shaba = models.CharField(max_length=50)
+
+    # relation
+    pending = models.ForeignKey(Pending, on_delete=models.PROTECT)
+
+
+class SadadPending(models.Model):
+
+    """
+    melli bank pending database for storing it's special feature
+
+    column name :
+
+        1) terminalID
+        2) pendingID
+        3) signDATA
+        4) multiplex shaba
+        5) token
+        6) resCode
+        7) Description
+
+    relation :
+
+        1) pending ==> Foreign
+
+    """
+
+    # terminal id that given from bank
+    terminalID = models.CharField(max_length=50)
+
+    # pending ID that we must build it for every transaction
+    pendingID = models.CharField(max_length=50)
+
+    # sign Data that we must build it for get token
+    signData = models.CharField(max_length=50)
+
+    # bloger shaba
+    multiplex_shaba = models.CharField(max_length=50)
+
+    # token that given from bank server and this is unique
+    token = models.CharField(max_length=50)
+
+    # res code that given with token
+    resCode = models.CharField(max_length=50)
+
+    # description that given with token
+    description = models.CharField(max_length=50)
+
+    # relation
+    pending = models.ForeignKey(Pending, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return str(self.pendingID)
+
+
 ###########################################################
 ###########################################################
 """                  Additional class                   """
