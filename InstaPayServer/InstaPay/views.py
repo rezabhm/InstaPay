@@ -1771,9 +1771,78 @@ def create_factor(requests, product_hashcode):
     create factor and create bank gateway token for buy
     """
 
-    return HttpResponse("create factor product" + str(product_hashcode))
+    if requests.user.is_authenticated and requests.user.is_superuser:
+
+        # return to main page
+        return HttpResponseRedirect(reverse('main'))
+
+    else:
+
+        # get post data
+
+        product_hashcode = requests.POST['product_hashcode']
+        price = requests.POST['price']
+        name = requests.POST['name']
+        lastname = requests.POST['lastname']
+        phone_number = requests.POST['phone_number']
+        postal_code = requests.POST['postal_code']
+        bank = requests.POST['bank']
+        address = requests.POST['address']
+        number_of_product = models.POST['number_of_product']
+
+        try:
+            email_field = requests.POST['email']
+        except:
+            email_field = None
+
+        # get product object
+        product_obj = models.Product.objects.get(product_hashcode=product_hashcode)
+
+        # get bloger object
+        bloger_obj = product_obj.bloger
+
+        # get customer object
+        customer_objects_list = models.Customer.objects.all().filter(phone_number=phone_number)
+
+        if len(customer_objects_list) > 0:
+
+            # get object
+            customer_obj = customer_objects_list[0]
+
+        else:
+
+            # create object
+            customer_obj = models.Customer(phone_number=phone_number)
+
+            customer_obj.name = name
+            customer_obj.last_name = lastname
+            customer_obj.customer_email = email_field
+            customer_obj.address = address
+            customer_obj.product = product_obj
+            customer_obj.bloger = bloger_obj
+
+            # save object
+            customer_obj.save()
+
+        # create factor objects
+        factor_obj = models.Factor()
+        factor_obj.price = product_obj.price
+        factor_obj.number_of_product = number_of_product
+        factor_obj.bloger_payment_bank = bank
+
+        factor_obj.bloger = bloger_obj
+        factor_obj.product = product_obj
+        factor_obj.customer = customer_obj
+
+        # save factor
+        factor_obj.save()
+
+        # start create pending objects
 
 
-def verify_factor(requests, product_hashcode):
+def verify_factor_sadad(requests, product_hashcode):
 
+    return HttpResponse("verify product" + str(product_hashcode))
+
+def verify_factor_saman(requests, product_hashcode):
     return HttpResponse("verify product" + str(product_hashcode))

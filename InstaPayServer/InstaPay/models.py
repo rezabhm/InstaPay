@@ -340,6 +340,7 @@ class Factor(models.Model):
         20. bloger payment minutes
         21. bloger payment bank
         22. bloger payment serial
+        23. create factor time
 
     factor's relation :
 
@@ -353,12 +354,15 @@ class Factor(models.Model):
     # factor id
     factor_id = models.IntegerField(default=uuid1().int)
 
+    # create factor time
+    create_time = models.FloatField(default=time.time())
+
     # customer payment date time
-    customer_payment_year = models.IntegerField()
-    customer_payment_month = models.IntegerField()
-    customer_payment_day = models.IntegerField()
-    customer_payment_hours = models.IntegerField()
-    customer_payment_minutes = models.IntegerField()
+    customer_payment_year = models.IntegerField(null=True)
+    customer_payment_month = models.IntegerField(null=True)
+    customer_payment_day = models.IntegerField(null=True)
+    customer_payment_hours = models.IntegerField(null=True)
+    customer_payment_minutes = models.IntegerField(null=True)
 
     # bloger deliver product (True) , not deliver (False)
     factor_statement_ordering_factor = models.BooleanField(default=False)
@@ -372,7 +376,7 @@ class Factor(models.Model):
     # number of product that sold
     number_of_product = models.IntegerField(default=1)
 
-    # payment date time
+    # delivery date time
     delivery_year = models.IntegerField(null=True)
     delivery_month = models.IntegerField(null=True)
     delivery_day = models.IntegerField(null=True)
@@ -388,9 +392,6 @@ class Factor(models.Model):
 
     # bloger payment bank
     bloger_payment_bank = models.CharField(max_length=15, null=True)
-
-    # bloger payment serial
-    bloger_payment_serial = models.CharField(max_length=50, null=True)
 
     # relation
     bloger = models.ForeignKey(Bloger, on_delete=models.CASCADE)
@@ -523,8 +524,147 @@ class SadadPending(models.Model):
         return str(self.pendingID)
 
 
-###########################################################
-###########################################################
-"""                  Additional class                   """
-###########################################################
-###########################################################
+class Payment(models.Model):
+
+    """
+    payment database for store successful payment
+
+    column name :
+
+        1. status
+        2. payment time
+        3. amount
+        4. traceNO
+        5. paymentID
+
+    relation :
+
+        1. OneToOne with factor
+        2. OneToOne with pending
+
+    """
+
+    # status code that define buy status
+    status = models.IntegerField()
+
+    # payment time
+    payment_time = models.FloatField(default=time.time())
+
+    # amount
+    amount = models.IntegerField()
+
+    # traceNO == code rahgiri
+    traceNO = models.CharField(max_length=50)
+
+    # payment id that we had build when create pending object
+    paymentID = models.CharField(max_length=50)
+
+    # relation
+    factor = models.OneToOneField(Factor, on_delete=models.PROTECT)
+    pending = models.OneToOneField(Pending, on_delete=models.PROTECT)
+
+
+class SamanPayment(models.Model):
+
+    """
+    table for storing saman gateway successful payment
+
+    column name :
+
+        1. RefNum
+        2. time
+        3. terminalID
+        4. Verify status
+        5. payment id
+
+    relation :
+
+        1. OneToOne with Saman pending
+        2. OneToOne with payment
+
+    """
+
+    # RefNum is digital
+    refNUM = models.CharField(max_length=50)
+
+    # payment time
+    payment_time = models.FloatField(default=time.time())
+
+    # terminalID that give from bank
+    terminalID = models.CharField(max_length=50)
+
+    # verify status
+    Verify_Status = models.BooleanField(default=False)
+
+    # payment id that we must build it.
+    PaymentID = models.CharField(max_length=50)
+
+    # relation
+    saman_pending = models.OneToOneField(SamanPending, on_delete=models.PROTECT)
+    payment = models.OneToOneField(Payment, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return self.refNUM
+
+
+class SadadPayment(models.Model):
+
+    """
+    Sadad payment database for store payment information
+
+    column name :
+
+        1. paymentID
+        2. Hashed Card
+        3. Primary ACC No
+        4. switch res code
+        5. Rescode
+        6. token
+        7. Retrivel Ref no
+        8. system trace no
+        9. verify status
+        10. time
+
+    relation :
+
+        1. OneToOne with payment
+        2. OneToOne with SadadPending
+
+    """
+
+    # payment id that we must build it
+    PaymentID = models.CharField(max_length=50)
+
+    # megdar hash card pardakht konande
+    Hashed_Card = models.CharField(max_length=50)
+
+    # megdar mask card
+    primary_acc_no = models.CharField(max_length=50)
+
+    # transaction report
+    switch_res_Code = models.CharField(max_length=50)
+
+    # rescode
+    rescode = models.CharField(max_length=50)
+
+    # token that give from bank for every transaction
+    token = models.CharField(max_length=50)
+
+    # transaction source number
+    retrival_ref_no = models.CharField(max_length=50)
+
+    # shomare peigiri
+    system_trace_no = models.CharField(max_length=50)
+
+    # verify_status
+    verify_status = models.BooleanField(default=False)
+
+    # time
+    payment_time = models.FloatField(default=time.time())
+
+    # relation
+    payment = models.OneToOneField(Payment, on_delete=models.PROTECT)
+    sadad_pending = models.OneToOneField(SadadPending, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return self.PaymentID

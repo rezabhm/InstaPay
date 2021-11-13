@@ -105,7 +105,9 @@ urlpatterns = [
     re_path(r'^bloger/SignUp/Form/$', views.bloger_signup_form, name="Bloger_SignUp_Form"),
     re_path(r'^bloger/verify/information/$', views.bloger_verify_information, name="Bloger_Verify_Information"),
     re_path(r'^bloger/edit/information/$', views.bloger_edit_information, name="Bloger_Edit_Information"),
-    re_path(r'^bloger/edit/information/Form/$', views.bloger_edit_information_form, name="Bloger_Edit_Information_Form"),
+    re_path(r'^bloger/edit/information/Form/$', views.bloger_edit_information_form,
+            name="Bloger_Edit_Information_Form"),
+
     re_path(r'^bloger/login/Form/$', views.bloger_login_form, name="Bloger_LogIn_Form"),
     re_path(r'^bloger/login/$', views.bloger_login, name="Bloger_LogIn"),
     re_path(r'^bloger/logout/$', views.bloger_logout, name="Bloger_LogOut"),
@@ -121,7 +123,9 @@ urlpatterns = [
     re_path(r'^product/list/$', views.product_list, name="Product_List"),
     re_path(r'^product/list/(?P<page_name>)/$', views.product_list_admin, name="Product_List_Admin"),
     re_path(r'^product/edit/$', views.edit_product, name='Edit_Product'),
-    re_path(r'^product/edit/form/(?P<product_hashcode>[0-9]{11,13})/$', views.edit_product_form, name='Edit_Product_Form'),
+    re_path(r'^product/edit/form/(?P<product_hashcode>[0-9]{11,13})/$', views.edit_product_form,
+            name='Edit_Product_Form'),
+
     re_path(r'^product/delete/(?P<product_hashcode>[0-9]{11,13})/$', views.delete_product, name="Delete_Product"),
 
     # product factor url
@@ -151,6 +155,10 @@ urlpatterns = [
 
     re_path(r'^(?P<product_hashcode>[0-9]{11,13})/$', views.product_buy, name="Product_Buy"),
     re_path(r'^(?P<product_hashcode>[0-9]{11,13})/Factor/Form/$', views.create_factor, name="Create_Factor"),
-    re_path(r'^(?P<product_hashcode>[0-9]{11,13})/Verify/$', views.verify_factor, name="Verify_Factor"),
+    re_path(r'^(?P<product_hashcode>[0-9]{11,13})/Verify/sadad/$', views.verify_factor_sadad,
+            name="Verify_Factor_Sadad"),
+
+    re_path(r'^(?P<product_hashcode>[0-9]{11,13})/Verify/saman/$', views.verify_factor_saman,
+            name="Verify_Factor_Saman"),
 
 ]

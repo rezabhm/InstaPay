@@ -50,7 +50,7 @@ class FactorAdmin(admin.ModelAdmin):
 
     fieldsets = (
 
-        ("factor information", {"fields": ("factor_id", "price", "number_of_product")}),
+        ("factor information", {"fields": ("factor_id", "price", "number_of_product", 'create_time')}),
         ("customer factor", {"fields": ("customer_payment_year", "customer_payment_month", "customer_payment_day",
                                         "customer_payment_hours", "customer_payment_minutes")}),
 
@@ -59,7 +59,7 @@ class FactorAdmin(admin.ModelAdmin):
 
         ("bloger factor", {"fields": ("factor_statement_payment_to_bloger", "bloger_payment_year",
                                       "bloger_payment_month", "bloger_payment_day", "bloger_payment_hours",
-                                      "bloger_payment_minutes", "bloger_payment_bank", "bloger_payment_serial")}),
+                                      "bloger_payment_minutes", "bloger_payment_bank")}),
 
         ("relation", {"fields": ("bloger", "product", "customer", "off_code")})
 
@@ -107,5 +107,39 @@ class SadadPendingAdmin(admin.ModelAdmin):
         ('information', {'fields': ('terminalID', 'pendingID', 'signData', 'multiplex_shaba', 'token', 'resCode',
                                     'description')}),
         ('relation', {'fields': ('pending',)})
+
+    )
+
+
+@admin.register(models.Payment)
+class PaymentAdmin(admin.ModelAdmin):
+
+    fieldsets = (
+
+        ('information', {'fields': ('status', 'payment_time', 'amount', 'traceNO', "paymentID")}),
+        ('Relation', {'fields': ('factor', 'pending')}),
+
+    )
+
+
+@admin.register(models.SamanPayment)
+class SamanPaymentAdmin(admin.ModelAdmin):
+
+    fieldsets = (
+
+        ('information', {'fields': ('refNUM', "payment_time", 'terminalID', 'Verify_Status', "PaymentID")}),
+        ('Relation', {'fields': ('payment', 'saman_pending')}),
+
+    )
+
+
+@admin.register(models.SadadPayment)
+class SadadPaymentAdmin(admin.ModelAdmin):
+
+    fieldsets = (
+
+        ('information', {'fields': ('PaymentID', 'Hashed_Card', "primary_acc_no", 'switch_res_Code', 'rescode', 'token',
+                                    'retrival_ref_no', 'system_trace_no', 'verify_status', 'payment_time')}),
+        ('Relation', {'fields': ('payment', 'sadad_pending')}),
 
     )
