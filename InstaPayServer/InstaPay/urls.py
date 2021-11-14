@@ -161,4 +161,6 @@ urlpatterns = [
     re_path(r'^(?P<product_hashcode>[0-9]{11,13})/Verify/saman/$', views.verify_factor_saman,
             name="Verify_Factor_Saman"),
 
+    # pay money from our bank account to bloger
+    # url ...
 ]

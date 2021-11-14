@@ -1,8 +1,19 @@
-# terminal id for split every transaction
-terminalID = "123456789"
+"""
+Domain Address
+"""
 
-# acceptor unique id
-merchantID = "123456789"
+domain = 'https://www.instapay.ir/'
 
-# for identify code for acceptor
-terminalKEY = "123456789"
+"""
+Saman portal Information
+"""
+
+# terminal id given from bank
+saman_terminalID = 'Saman_termianl_ID'
+
+"""
+Sadad portal Information
+"""
+sadad_termianlID = 'Sadad_terminal_ID'
+sadad_merchantID = 'sadad_merchant_ID'
+sadad_terminalKey = 'sadad_terminalKey'

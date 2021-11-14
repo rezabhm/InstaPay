@@ -19,7 +19,7 @@
     <tr>
       <td> price </td>
       <td><strike>{{ prod.price }}</strike></td>
-      <td>{{ price }} </td>
+      <td>{{ off_price }} </td>
     </tr>
 
   {% else %}
@@ -49,7 +49,7 @@
       <form action="{% url 'Create_Factor' product_hashcode=prod.product_hashcode %}" method="post">
 
         <input type="hidden" value="{{ prod.product_hashcode }}" name="product_hashcode" >
-        <input type="hidden" value="{{ price }}" name="price" >
+        <input type="hidden" value="{{ off_price }}" name="price" >
 
         <tr>
           <td>name </td>

@@ -1,5 +1,5 @@
 from django.db import models
-from uuid import uuid1
+from uuid import uuid4
 import time
 import random
 
@@ -352,7 +352,7 @@ class Factor(models.Model):
     """
 
     # factor id
-    factor_id = models.IntegerField(default=uuid1().int)
+    factor_id = models.IntegerField(default=uuid4().int)
 
     # create factor time
     create_time = models.FloatField(default=time.time())
@@ -369,6 +369,9 @@ class Factor(models.Model):
 
     # factor statement (payment_to_bloger = True / not_payment_to_bloger = False)
     factor_statement_payment_to_bloger = models.BooleanField(default=False)
+
+    # customer pay it to bloger or not
+    customer_payment_status = models.BooleanField(default=False)
 
     # factor price for one product
     price = models.IntegerField(help_text="تومان")
@@ -416,6 +419,8 @@ class Pending(models.Model):
         3) pending time
         4) cellNum
         5) bank
+        6) pendingID
+        7) redirect url
 
     relation :
 
@@ -427,6 +432,7 @@ class Pending(models.Model):
     amount = models.IntegerField()
 
     # merchantID that given from bank
+    # for saman bank this param equal terminalID
     merchantID = models.CharField(max_length=50)
 
     # pending time
@@ -437,6 +443,12 @@ class Pending(models.Model):
 
     # bank name
     bank = models.CharField(max_length=25)
+
+    # pending id that we must build it for every transaction
+    pendingID = models.CharField(max_length=50)
+
+    # redirect url
+    redirect_url = models.CharField(max_length=250)
 
     # relation
     factor = models.OneToOneField(Factor, on_delete=models.PROTECT)

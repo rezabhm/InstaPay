@@ -9,8 +9,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 
 from . import models
-from . import form
 import hashlib
+from . import Information
 
 # views code ...
 
@@ -1771,6 +1771,9 @@ def create_factor(requests, product_hashcode):
     create factor and create bank gateway token for buy
     """
 
+    print(requests.POST.dict())
+
+    # superuser can't buy product
     if requests.user.is_authenticated and requests.user.is_superuser:
 
         # return to main page
@@ -1820,13 +1823,14 @@ def create_factor(requests, product_hashcode):
             customer_obj.address = address
             customer_obj.product = product_obj
             customer_obj.bloger = bloger_obj
+            customer_obj.postal_code = postal_code
 
             # save object
             customer_obj.save()
 
         # create factor objects
         factor_obj = models.Factor()
-        factor_obj.price = product_obj.price
+        factor_obj.price = price
         factor_obj.number_of_product = number_of_product
         factor_obj.bloger_payment_bank = bank
 
@@ -1838,11 +1842,88 @@ def create_factor(requests, product_hashcode):
         factor_obj.save()
 
         # start create pending objects
+        # split pending process to Sadad and Saman Bank
+        if bank == 'saman':
+
+            # we must start saman process
+
+            # create pending object
+            pending_obj = models.Pending()
+
+            # set param
+            pending_obj.amount = price * number_of_product
+            pending_obj.cellNUM = str(phone_number)
+            pending_obj.merchantID = Information.saman_terminalID
+            pending_obj.bank = bank
+            pending_obj.pendingID = str(factor_obj.factor_id)
+            pending_obj.redirect_url = Information.domain + str(product_hashcode) + "/Verify/saman/"
+
+            # relation
+            pending_obj.factor = factor_obj
+
+            # save pending objects
+            pending_obj.save()
+
+            """
+            SamanPending model
+            """
+
+            # create SamanPending objects
+            saman_pending_obj = models.SamanPending()
+
+            # set param
+            saman_pending_obj.terminalID = Information.saman_terminalID
+            saman_pending_obj.pendingID = str(factor_obj.factor_id)
+            saman_pending_obj.multiplex_shaba = bloger_obj.shaba
+
+            # relation
+            saman_pending_obj.pending = pending_obj
+
+            # save object
+            saman_pending_obj.save()
+
+            # show factor to user and redirect to bank portal
+            # get template
+            factor_temp = loader.get_template('InstaPay/Factor.html')
+
+            context = {
+
+                "factor": factor_obj,
+                "customer": customer_obj,
+                "product": product_obj,
+                "pending": pending_obj,
+                "saman_pending": saman_pending_obj,
+
+            }
+
+            return HttpResponse(factor_temp.render(context))
+
+        elif bank == 'sadad':
+
+            # start sadad portal process
+
+            # create pending object
+            pending_obj = models.Pending()
+
+            # set param
+            pending_obj.amount = price * number_of_product
+            pending_obj.cellNUM = str(phone_number)
+            pending_obj.merchantID = Information.sadad_merchantID
+            pending_obj.bank = bank
+            pending_obj.pendingID = str(factor_obj.factor_id)
+            pending_obj.redirect_url = Information.domain + str(product_hashcode) + "/Verify/sadad/"
+
+            # relation
+            pending_obj.factor = factor_obj
+
+            # save pending objects
+            pending_obj.save()
 
 
 def verify_factor_sadad(requests, product_hashcode):
 
     return HttpResponse("verify product" + str(product_hashcode))
+
 
 def verify_factor_saman(requests, product_hashcode):
     return HttpResponse("verify product" + str(product_hashcode))
