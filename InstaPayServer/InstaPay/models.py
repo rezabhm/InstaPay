@@ -433,7 +433,7 @@ class Pending(models.Model):
 
     # merchantID that given from bank
     # for saman bank this param equal terminalID
-    merchantID = models.CharField(max_length=50)
+    merchantID = models.IntegerField()
 
     # pending time
     pending_time = models.FloatField(default=time.time())
@@ -475,10 +475,10 @@ class SamanPending(models.Model):
     """
 
     # terminal ID that given from bank
-    terminalID = models.CharField(max_length=50)
+    terminalID = models.IntegerField()
 
     # pending id that we must build it for every transaction
-    pendingID = models.CharField(max_length=25)
+    pendingID = models.IntegerField()
 
     # bloger shaba
     multiplex_shaba = models.CharField(max_length=50)

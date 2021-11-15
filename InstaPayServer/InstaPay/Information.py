@@ -9,10 +9,11 @@ Saman portal Information
 """
 
 # terminal id given from bank
-saman_terminalID = 'Saman_termianl_ID'
+saman_terminalID = 123456789123456789
 
 """
 Pasargad portal Information
 """
-pasargad_termianlID = 'pasargad_terminal_ID'
-pasargad_merchantCode = 'pasargad_merchant_ID'
+
+pasargad_termianlID = 123456789
+pasargad_merchantCode = 1234567899876543210

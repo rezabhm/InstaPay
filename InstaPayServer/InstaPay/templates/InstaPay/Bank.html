@@ -1,0 +1,30 @@
+{% extends 'InstaPay/main.html' %}
+
+{% block example %}
+
+{% if bank == 'saman' %}
+waiting for connect saman bank portal
+
+terminalID : {{ termianlID }}<br>
+resnum : {{ resNum }}<br>
+redirecturl : {{ redirectUrl }}<br>
+amount: {{ amount }}<br>
+phone number : {{ cellNum }}<br>
+
+{% else %}
+
+amount : {{ amount }}<br>
+terminalID : {{ termianlID }}<br>
+resNum : {{ resNum }}<br>
+terminalID : {{ termianlID }}<br>
+redirectUrl : {{ redirectUrl }}<br>
+merchantCode : {{ merchantCode }}<br>
+invoiceDate : {{ invoiceDate }}<br>
+action : {{ action }}<br>
+timeStamp : {{ timeStamp }}<br>
+sign : {{ sign }}<br>
+
+
+{% endif %}
+
+{% endblock %}

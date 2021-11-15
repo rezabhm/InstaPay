@@ -646,7 +646,7 @@ def bloger_change_password(requests):
             bloger_obj.bloger_password_hashcode = new_pass
             bloger_obj.save()
 
-            return HttpResponseRedirect(reverse("bloger_login_form", args=[ "موفقیت رمز عبور را تغییر داده اید"]))
+            return HttpResponseRedirect(reverse("bloger_login_form", args=["موفقیت رمز عبور را تغییر داده اید"]))
 
 
 def create_product_form(requests):
@@ -1805,232 +1805,295 @@ def create_factor(requests, product_hashcode):
         # get product object
         product_obj = models.Product.objects.get(product_hashcode=product_hashcode)
 
-        # get bloger object
-        bloger_obj = product_obj.bloger
+        if product_obj.number_of_product - number_of_product < 0:
 
-        # get customer object
-        customer_objects_list = models.Customer.objects.all().filter(phone_number=phone_number)
+            # you cant buy anything
+            # redirect to product_hashcode
+            return HttpResponseRedirect(reverse('Product_Buy', args=[product_hashcode]))
 
-        if len(customer_objects_list) > 0:
+        elif not product_obj.purchase_state:
 
-            # get object
-            customer_obj = customer_objects_list[0]
+            # you cant buy anything
+            # redirect to product_hashcode
+            return HttpResponseRedirect(reverse('Product_Buy', args=[product_hashcode]))
 
         else:
 
-            # create object
-            customer_obj = models.Customer(phone_number=phone_number)
+            # get bloger object
+            bloger_obj = product_obj.bloger
 
-            customer_obj.name = name
-            customer_obj.last_name = lastname
-            customer_obj.customer_email = email_field
-            customer_obj.address = address
-            customer_obj.product = product_obj
-            customer_obj.bloger = bloger_obj
-            customer_obj.postal_code = postal_code
+            # get customer object
+            customer_objects_list = models.Customer.objects.all().filter(phone_number=phone_number)
 
-            # save object
-            customer_obj.save()
+            if len(customer_objects_list) > 0:
 
-        # create factor objects
-        factor_obj = models.Factor()
-        factor_obj.price = price
-        factor_obj.number_of_product = number_of_product
-        factor_obj.bloger_payment_bank = bank
+                # get object
+                customer_obj = customer_objects_list[0]
 
-        factor_obj.bloger = bloger_obj
-        factor_obj.product = product_obj
-        factor_obj.customer = customer_obj
+            else:
 
-        # save factor
-        factor_obj.save()
+                # create object
+                customer_obj = models.Customer(phone_number=phone_number)
 
-        # start create pending objects
-        # split pending process to Sadad and Saman Bank
-        if bank == 'saman':
+                customer_obj.name = name
+                customer_obj.last_name = lastname
+                customer_obj.customer_email = email_field
+                customer_obj.address = address
+                customer_obj.product = product_obj
+                customer_obj.bloger = bloger_obj
+                customer_obj.postal_code = postal_code
 
-            # we must start saman process
+                # save object
+                customer_obj.save()
 
-            # create pending object
-            pending_obj = models.Pending()
+            # create factor objects
+            factor_obj = models.Factor()
+            factor_obj.price = price
+            factor_obj.number_of_product = number_of_product
+            factor_obj.bloger_payment_bank = bank
 
-            # set param
-            pending_obj.amount = price * number_of_product
-            pending_obj.cellNUM = str(phone_number)
-            pending_obj.merchantID = Information.saman_terminalID
-            pending_obj.bank = bank
-            pending_obj.pendingID = str(factor_obj.factor_id)
-            pending_obj.redirect_url = Information.domain + str(product_hashcode) + "/Verify/saman/"
+            factor_obj.bloger = bloger_obj
+            factor_obj.product = product_obj
+            factor_obj.customer = customer_obj
 
-            # relation
-            pending_obj.factor = factor_obj
+            # save factor
+            factor_obj.save()
 
-            # save pending objects
-            pending_obj.save()
+            # start create pending objects
+            # split pending process to Sadad and Saman Bank
+            if bank == 'saman':
 
-            """
-            SamanPending model
-            """
+                # we must start saman process
 
-            # create SamanPending objects
-            saman_pending_obj = models.SamanPending()
+                # create pending object
+                pending_obj = models.Pending()
 
-            # set param
-            saman_pending_obj.terminalID = Information.saman_terminalID
-            saman_pending_obj.pendingID = str(factor_obj.factor_id)
-            saman_pending_obj.multiplex_shaba = bloger_obj.shaba
+                # set param
+                pending_obj.amount = price * number_of_product
+                pending_obj.cellNUM = str(phone_number)
+                pending_obj.merchantID = Information.saman_terminalID
+                pending_obj.bank = bank
+                pending_obj.pendingID = factor_obj.factor_id
+                pending_obj.redirect_url = Information.domain + str(product_hashcode) + "/Verify/saman/"
 
-            # relation
-            saman_pending_obj.pending = pending_obj
+                # relation
+                pending_obj.factor = factor_obj
 
-            # save object
-            saman_pending_obj.save()
+                # save pending objects
+                pending_obj.save()
 
-            # show factor to user and redirect to bank portal
-            # get template
-            factor_temp = loader.get_template('InstaPay/Factor.html')
+                """
+                SamanPending model
+                """
 
-            context = {
+                # create SamanPending objects
+                saman_pending_obj = models.SamanPending()
 
-                "factor": factor_obj,
-                "customer": customer_obj,
-                "product": product_obj,
-                "pending": pending_obj,
-                "saman_pending": saman_pending_obj,
-                'saman_state': True,
+                # set param
+                saman_pending_obj.terminalID = Information.saman_terminalID
+                saman_pending_obj.pendingID = factor_obj.factor_id
+                saman_pending_obj.multiplex_shaba = bloger_obj.shaba
 
-            }
+                # relation
+                saman_pending_obj.pending = pending_obj
 
-            return HttpResponse(factor_temp.render(context))
+                # save object
+                saman_pending_obj.save()
 
-        elif bank == 'pasargad':
+                # show factor to user and redirect to bank portal
+                # get template
+                factor_temp = loader.get_template('InstaPay/Factor.html')
 
-            # start pasargad portal process
+                context = {
 
-            # create pending object
-            pending_obj = models.Pending()
+                    "factor": factor_obj,
+                    'factor_time': time.ctime(factor_obj.create_time),
+                    "final_price": number_of_product * price,
+                    "customer": customer_obj,
+                    "product": product_obj,
+                    "pending": pending_obj,
+                    "saman_pending": saman_pending_obj,
+                    'saman_state': True,
 
-            # set param
-            pending_obj.amount = price * number_of_product
-            pending_obj.cellNUM = str(phone_number)
-            pending_obj.merchantID = str(Information.pasargad_merchantCode)
-            pending_obj.bank = bank
-            pending_obj.pendingID = str(factor_obj.factor_id)
-            pending_obj.redirect_url = Information.domain + str(product_hashcode) + "/Verify/pasargad/"
+                }
 
-            # relation
-            pending_obj.factor = factor_obj
+                return HttpResponse(factor_temp.render(context))
 
-            # save pending objects
-            pending_obj.save()
+            elif bank == 'pasargad':
 
-            """
-            pasargad pending model
-            """
+                # start pasargad portal process
 
-            # create pasargad models object
-            pasargad_pending_obj = models.PasargadPending()
+                # create pending object
+                pending_obj = models.Pending()
 
-            # set param
-            pasargad_pending_obj.pendingID = int(factor_obj.factor_id)
-            pasargad_pending_obj.merchantCode = int(Information.pasargad_merchantCode)
-            pasargad_pending_obj.terminalID = int(Information.pasargad_termianlID)
-            pasargad_pending_obj.amount = number_of_product * price
-            pasargad_pending_obj.redirectAddress = Information.domain + str(product_hashcode) + "/Verify/pasargad/"
+                # set param
+                pending_obj.amount = price * number_of_product
+                pending_obj.cellNUM = str(phone_number)
+                pending_obj.merchantID = Information.pasargad_merchantCode
+                pending_obj.bank = bank
+                pending_obj.pendingID = factor_obj.factor_id
+                pending_obj.redirect_url = Information.domain + str(product_hashcode) + "/Verify/pasargad/"
 
-            # create invoice date
+                # relation
+                pending_obj.factor = factor_obj
 
-            month_dict = {
+                # save pending objects
+                pending_obj.save()
 
-                "Jan": '01',
-                "Feb": '02',
-                "Mar": '03',
-                "Apr": '04',
-                "May": '05',
-                "Jun": '06',
-                "Jul": '07',
-                "Aug": '08',
-                "Sep": '09',
-                "Nov": '10',
-                "Dec": '11',
-                "Oct": '12',
+                """
+                pasargad pending model
+                """
 
-            }
+                # create pasargad models object
+                pasargad_pending_obj = models.PasargadPending()
+
+                # set param
+                pasargad_pending_obj.pendingID = int(factor_obj.factor_id)
+                pasargad_pending_obj.merchantCode = int(Information.pasargad_merchantCode)
+                pasargad_pending_obj.terminalID = int(Information.pasargad_termianlID)
+                pasargad_pending_obj.amount = number_of_product * price
+                pasargad_pending_obj.redirectAddress = Information.domain + str(product_hashcode) + "/Verify/pasargad/"
+
+                # create invoice date
+
+                month_dict = {
+
+                    "Jan": '01',
+                    "Feb": '02',
+                    "Mar": '03',
+                    "Apr": '04',
+                    "May": '05',
+                    "Jun": '06',
+                    "Jul": '07',
+                    "Aug": '08',
+                    "Sep": '09',
+                    "Nov": '10',
+                    "Dec": '11',
+                    "Oct": '12',
+
+                }
 
 
-            cur_time = time.ctime(time.time()).split(' ')
-            cur_year = cur_time[-1]
-            cur_month = month_dict[cur_time[1]]
-            cur_day = '0' + str(cur_time[2]) if len(cur_time[2]) < 2 else cur_time[2]
-            cur_hour = cur_time[3]
+                cur_time = time.ctime(time.time()).split(' ')
+                cur_year = cur_time[-1]
+                cur_month = month_dict[cur_time[1]]
+                cur_day = '0' + str(cur_time[2]) if len(cur_time[2]) < 2 else cur_time[2]
+                cur_hour = cur_time[3]
 
-            inv_date = '{0}/{1}/{2} {3}'.format(cur_year, cur_month, cur_day, cur_hour)
+                inv_date = '{0}/{1}/{2} {3}'.format(cur_year, cur_month, cur_day, cur_hour)
 
-            # set inv date param
-            pasargad_pending_obj.invoiceDate = inv_date
+                # set inv date param
+                pasargad_pending_obj.invoiceDate = inv_date
 
-            # create time stamp
-            cur_time = time.ctime(time.time()+5.0).split(' ')
-            cur_year = cur_time[-1]
-            cur_month = month_dict[cur_time[1]]
-            cur_day = '0' + str(cur_time[2]) if len(cur_time[2]) < 2 else cur_time[2]
-            cur_hour = cur_time[3]
+                # create time stamp
+                cur_time = time.ctime(time.time()+5.0).split(' ')
+                cur_year = cur_time[-1]
+                cur_month = month_dict[cur_time[1]]
+                cur_day = '0' + str(cur_time[2]) if len(cur_time[2]) < 2 else cur_time[2]
+                cur_hour = cur_time[3]
 
-            tm_stmp = '{0}/{1}/{2} {3}'.format(cur_year, cur_month, cur_day, cur_hour)
+                tm_stmp = '{0}/{1}/{2} {3}'.format(cur_year, cur_month, cur_day, cur_hour)
 
-            # set time stamp param
-            pasargad_pending_obj.timeStamp = tm_stmp
+                # set time stamp param
+                pasargad_pending_obj.timeStamp = tm_stmp
 
-            # create sign data
-            x = '#{0}#{1}#{2}#{3}#{4}#{5}#{6}#{7}#'.format(
+                # create sign data
+                x = '#{0}#{1}#{2}#{3}#{4}#{5}#{6}#{7}#'.format(
 
-                str(Information.pasargad_merchantCode),
-                str(Information.pasargad_termianlID),
-                str(factor_obj.factor_id),
-                str(inv_date),
-                str(number_of_product * price),
-                Information.domain + str(product_hashcode) + "/Verify/pasargad/",
-                str(1003),
-                str(tm_stmp)
+                    str(Information.pasargad_merchantCode),
+                    str(Information.pasargad_termianlID),
+                    str(factor_obj.factor_id),
+                    str(inv_date),
+                    str(number_of_product * price),
+                    Information.domain + str(product_hashcode) + "/Verify/pasargad/",
+                    str(1003),
+                    str(tm_stmp)
 
-            )
+                )
 
-            sign_data = sha1(x).hexdigest()
+                sign_data = sha1(x).hexdigest()
 
-            # import private key
-            with open('privateKey.txt', 'r') as fd:
-                private_key = RSA.importKey(fd.read())
+                # import private key
+                with open('privateKey.txt', 'r') as fd:
+                    private_key = RSA.importKey(fd.read())
 
-            signer = PKCS1_v1_5.new(private_key)
+                signer = PKCS1_v1_5.new(private_key)
 
-            # sign data with private key
-            sign_data = signer.sign(sign_data)
+                # sign data with private key
+                sign_data = signer.sign(sign_data)
 
-            # convert to base64
-            sign_data = base64.b64decode(sign_data)
+                # convert to base64
+                sign_data = base64.b64decode(sign_data)
 
-            # set sign data param
-            pasargad_pending_obj.signData = sign_data
+                # set sign data param
+                pasargad_pending_obj.signData = sign_data
 
-            # save model
-            pasargad_pending_obj.save()
+                # save model
+                pasargad_pending_obj.save()
 
-            # show factor to user and redirect to bank portal
-            # get template
-            factor_temp = loader.get_template('InstaPay/Factor.html')
+                # show factor to user and redirect to bank portal
+                # get template
+                factor_temp = loader.get_template('InstaPay/Factor.html')
 
-            context = {
+                context = {
 
-                "factor": factor_obj,
-                "customer": customer_obj,
-                "product": product_obj,
-                "pending": pending_obj,
-                "pasargad_pending": pasargad_pending_obj,
-                'saman_state': False,
+                    "factor": factor_obj,
+                    'factor_time': time.ctime(factor_obj.create_time),
+                    "final_price": number_of_product * price,
+                    "customer": customer_obj,
+                    "product": product_obj,
+                    "pending": pending_obj,
+                    "pasargad_pending": pasargad_pending_obj,
+                    'saman_state': False,
 
-            }
+                }
 
-            return HttpResponse(factor_temp.render(context))
+                return HttpResponse(factor_temp.render(context))
+
+
+def bank_url(requests):
+
+    """
+    waiting for bank portal
+    """
+
+    # load template
+    bank_temp = loader.get_template('InstaPay/Bank.html')
+
+    # get bank type
+    bank = requests.POST['bank']
+
+    if bank == 'saman':
+
+        context = {
+
+            'bank': bank,
+            'amount': requests.POST['Amount'],
+            'terminalID': requests.POST['TerminalID'],
+            'resNum': requests.POST['ResNum'],
+            'redirectUrl': requests.POST['RedirectUrl'],
+            'cellNum': requests.POST['CellNumber']
+
+        }
+
+    else:
+
+        context = {
+
+            'bank': bank,
+            'amount': requests.POST['amount'],
+            'terminalID': requests.POST['terminalCode'],
+            'resNum': requests.POST['invoiceNumber'],
+            'redirectUrl': requests.POST['redirectAddress'],
+            'merchantCode': requests.POST['merchantCode'],
+            'invoiceDate': requests.POST['invoiceDate'],
+            'action': requests.POST['action'],
+            'timeStamp': requests.POST['timeStamp'],
+            'sign': requests.POST['sign'],
+
+        }
+
+    return HttpResponse(bank_temp.render(context))
 
 
 def verify_factor_pasargad(requests, product_hashcode):

@@ -1,0 +1,92 @@
+{% extends 'InstaPay/main.html' %}
+
+{% block example %}
+
+Factor<br>
+
+<table>
+
+  <tr>
+    <td>factor id :</td>
+    <td> {{ factor.factor_id }}</td>
+  </tr>
+
+
+  <tr>
+    <td>factor time :</td>
+    <td> {{ factor_time }}</td>
+  </tr>
+
+
+  <tr>
+    <td>number of product</td>
+    <td> {{ factor.number_of_product }}</td>
+  </tr>
+
+
+  <tr>
+    <td>single price :</td>
+    <td> {{ factor.price }}</td>
+  </tr>
+
+
+  <tr>
+    <td>final price:</td>
+    <td> {{ final_price }}</td>
+  </tr>
+
+
+  <tr>
+    <td>bank portal name:</td>
+    <td> {{ factor.bank }}</td>
+  </tr>
+
+
+  <tr>
+    <td>aya mayel be pardakht nahayi hastin ???</td>
+    <td>
+
+      {% if saman_state %}
+
+        <form method="post" action="{% urls 'Bank_Url' %}">
+
+          <input type="hidden" name="bank" value="{{ pending.bank }}">
+          <input type="hidden" name="Amount" value="{{ final_price }}">
+          <input type="hidden" name="TerminalId" value="{{ saman_pending.terminalID }}">
+          <input type="hidden" name="ResNum" value="{{ saman_pending.pendingID }}">
+          <input type="hidden" name="RedirectURL" value="{% url 'Verify_Factor_Saman' product_hashcode=product.product_hashcode %}">
+          <input type="hidden" name="CellNumber" value="{{ customer.phone_number }}">
+
+          <input type="submit" value="pardakht">
+
+        </form>
+
+      {% else %}
+
+        <form method="post" action="{% urls 'Bank_Url' %}">
+
+          <input type="hidden" name="bank" value="{{ pending.bank }}">
+          <input type="hidden" name="merchantCode" value="{{ pending.merchantID }}">
+          <input type="hidden" name="amount" value="{{ final_price }}">
+          <input type="hidden" name="terminalCode" value="{{ pasargad_pending.terminalID }}">
+          <input type="hidden" name="invoiceNumber" value="{{ pasargad_pending.pendingID }}">
+          <input type="hidden" name="redirectAddress" value="{% url 'Verify_Factor_Pasargad' product_hashcode=product.product_hashcode %}">
+          <input type="hidden" name="invoiceDate" value="{{ pasargad_pending.invoiceDate }}">
+          <input type="hidden" name="action" value="{{ pasargad_pending.action }}">
+          <input type="hidden" name="timeStamp" value="{{ pasargad_pending.timestamp }}">
+          <input type="hidden" name="sign" value="{{ pasargad_pending.sign_data }}">
+
+          <input type="submit" value="pardakht">
+
+        </form>
+
+      {% endif %}
+    </td>
+  </tr>
+
+</table>
+
+
+
+
+{% endblock %}
