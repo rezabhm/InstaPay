@@ -12,8 +12,7 @@ Saman portal Information
 saman_terminalID = 'Saman_termianl_ID'
 
 """
-Sadad portal Information
+Pasargad portal Information
 """
-sadad_termianlID = 'Sadad_terminal_ID'
-sadad_merchantID = 'sadad_merchant_ID'
-sadad_terminalKey = 'sadad_terminalKey'
+pasargad_termianlID = 'pasargad_terminal_ID'
+pasargad_merchantCode = 'pasargad_merchant_ID'

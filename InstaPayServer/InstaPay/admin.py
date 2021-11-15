@@ -99,13 +99,13 @@ class SamanPendingAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(models.SadadPending)
-class SadadPendingAdmin(admin.ModelAdmin):
+@admin.register(models.PasargadPending)
+class PasargadPendingAdmin(admin.ModelAdmin):
 
     fieldsets = (
 
-        ('information', {'fields': ('terminalID', 'pendingID', 'signData', 'multiplex_shaba', 'token', 'resCode',
-                                    'description')}),
+        ('information', {'fields': ('terminalID', 'merchanCtode', 'pendingID', 'signData', 'invoiceDate', 'amount',
+                                    'redirectAddress', 'action', 'timeStamp')}),
         ('relation', {'fields': ('pending',)})
 
     )
@@ -133,13 +133,13 @@ class SamanPaymentAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(models.SadadPayment)
-class SadadPaymentAdmin(admin.ModelAdmin):
+@admin.register(models.PasargadPayment)
+class PasargadPaymentAdmin(admin.ModelAdmin):
 
     fieldsets = (
 
-        ('information', {'fields': ('PaymentID', 'Hashed_Card', "primary_acc_no", 'switch_res_Code', 'rescode', 'token',
-                                    'retrival_ref_no', 'system_trace_no', 'verify_status', 'payment_time')}),
-        ('Relation', {'fields': ('payment', 'sadad_pending')}),
+        ('information', {'fields': ('PaymentID', 'invoiceDate', 'transRefNum', 'traceNum', 'refNum',
+                                    'transactionTime', 'result')}),
+        ('Relation', {'fields': ('payment', 'pasargad_pending')}),
 
     )

@@ -1,5 +1,5 @@
 from django.db import models
-from uuid import uuid4
+from uuid import uuid1
 import time
 import random
 
@@ -352,7 +352,7 @@ class Factor(models.Model):
     """
 
     # factor id
-    factor_id = models.IntegerField(default=uuid4().int)
+    factor_id = models.IntegerField(default=uuid1().int)
 
     # create factor time
     create_time = models.FloatField(default=time.time())
@@ -486,21 +486,26 @@ class SamanPending(models.Model):
     # relation
     pending = models.ForeignKey(Pending, on_delete=models.PROTECT)
 
+    def __str__(self):
+        return str(self.pendingID)
 
-class SadadPending(models.Model):
+
+class PasargadPending(models.Model):
 
     """
-    melli bank pending database for storing it's special feature
+    Pasargad bank pending database for storing it's special feature
 
     column name :
 
-        1) terminalID
-        2) pendingID
-        3) signDATA
-        4) multiplex shaba
-        5) token
-        6) resCode
-        7) Description
+        1) terminalCode
+        2) merchantCode
+        3) pendingID
+        4) signDATA
+        5) InvoiceDate
+        6) Amount
+        7) redirectAddress
+        8) action
+        9) timeStamp
 
     relation :
 
@@ -509,25 +514,32 @@ class SadadPending(models.Model):
     """
 
     # terminal id that given from bank
-    terminalID = models.CharField(max_length=50)
+    terminalID = models.IntegerField()
 
-    # pending ID that we must build it for every transaction
-    pendingID = models.CharField(max_length=50)
+    # merchantCode
+    merchantCode = models.IntegerField()
 
-    # sign Data that we must build it for get token
-    signData = models.CharField(max_length=50)
+    # pending ID that we must build it for every transaction . this is InvoiceNumber
+    pendingID = models.IntegerField()
 
-    # bloger shaba
-    multiplex_shaba = models.CharField(max_length=50)
+    # sign Data that we must build it from our identify information
+    signData = models.CharField(max_length=150)
 
-    # token that given from bank server and this is unique
-    token = models.CharField(max_length=50)
+    # time (when we build factor)
+    invoiceDate = models.CharField(max_length=50)
 
-    # res code that given with token
-    resCode = models.CharField(max_length=50)
+    # amount
+    amount = models.IntegerField()
 
-    # description that given with token
-    description = models.CharField(max_length=50)
+    # redirect address to pasargad Verify page
+    redirectAddress = models.CharField(max_length=50)
+
+    # action define our transaction type
+    # we have 2 type of action that 1003 is buying transaction and 1004 is return type
+    action = models.IntegerField(default=1003)
+
+    # current time with 'yy/mm//dd hh:mm:ss' format
+    timeStamp = models.CharField(max_length=50)
 
     # relation
     pending = models.ForeignKey(Pending, on_delete=models.PROTECT)
@@ -575,6 +587,9 @@ class Payment(models.Model):
     factor = models.OneToOneField(Factor, on_delete=models.PROTECT)
     pending = models.OneToOneField(Pending, on_delete=models.PROTECT)
 
+    def __str__(self):
+        return str(self.paymentID)
+
 
 class SamanPayment(models.Model):
 
@@ -619,64 +634,53 @@ class SamanPayment(models.Model):
         return self.refNUM
 
 
-class SadadPayment(models.Model):
+class PasargadPayment(models.Model):
 
     """
-    Sadad payment database for store payment information
+    Pasargad payment database for store payment information
 
     column name :
 
         1. paymentID
-        2. Hashed Card
-        3. Primary ACC No
-        4. switch res code
-        5. Rescode
-        6. token
-        7. Retrivel Ref no
-        8. system trace no
-        9. verify status
-        10. time
+        2. InvoiceDate
+        3. transactionRefNum
+        4. traceNum
+        5. refNum
+        6. transactionTime
+        7. result
+
 
     relation :
 
         1. OneToOne with payment
-        2. OneToOne with SadadPending
+        2. OneToOne with PasargadPending
 
     """
 
     # payment id that we must build it
     PaymentID = models.CharField(max_length=50)
 
-    # megdar hash card pardakht konande
-    Hashed_Card = models.CharField(max_length=50)
+    # factor time
+    invoiceDate = models.CharField(max_length=50)
 
-    # megdar mask card
-    primary_acc_no = models.CharField(max_length=50)
+    # transsaction refrense Number
+    transRefNum = models.CharField(max_length=50)
 
-    # transaction report
-    switch_res_Code = models.CharField(max_length=50)
+    # trace Number
+    traceNum = models.CharField(max_length=50)
 
-    # rescode
-    rescode = models.CharField(max_length=50)
+    # refrense Number
+    refNum = models.CharField(max_length=50)
 
-    # token that give from bank for every transaction
-    token = models.CharField(max_length=50)
+    # transaction time
+    transactionTime = models.CharField(max_length=50)
 
-    # transaction source number
-    retrival_ref_no = models.CharField(max_length=50)
-
-    # shomare peigiri
-    system_trace_no = models.CharField(max_length=50)
-
-    # verify_status
-    verify_status = models.BooleanField(default=False)
-
-    # time
-    payment_time = models.FloatField(default=time.time())
+    # transaction final result
+    result = models.CharField(max_length=50)
 
     # relation
     payment = models.OneToOneField(Payment, on_delete=models.PROTECT)
-    sadad_pending = models.OneToOneField(SadadPending, on_delete=models.PROTECT)
+    pasargad_pending = models.OneToOneField(PasargadPending, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.PaymentID
