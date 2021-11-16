@@ -156,6 +156,9 @@ urlpatterns = [
     re_path(r'^(?P<product_hashcode>[0-9]{11,13})/$', views.product_buy, name="Product_Buy"),
     re_path(r'^(?P<product_hashcode>[0-9]{11,13})/Factor/Form/$', views.create_factor, name="Create_Factor"),
     re_path(r'^Bank/$', views.bank_url, name="Bank_Url"),
+    re_path(r'^(?P<product_hashcode>[0-9]{11,13})/(?P<factor_id>[0-9]{10,100})/Verify/zarinPal/$',
+            views.verify_factor_zarinpal, name="Verify_Factor_ZarinPal"),
+
     re_path(r'^(?P<product_hashcode>[0-9]{11,13})/Verify/pasargad/$', views.verify_factor_pasargad,
             name="Verify_Factor_Pasargad"),
 

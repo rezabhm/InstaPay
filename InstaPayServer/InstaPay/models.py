@@ -445,7 +445,7 @@ class Pending(models.Model):
     bank = models.CharField(max_length=25)
 
     # pending id that we must build it for every transaction
-    pendingID = models.CharField(max_length=50)
+    pendingID = models.IntegerField()
 
     # redirect url
     redirect_url = models.CharField(max_length=250)
@@ -548,6 +548,43 @@ class PasargadPending(models.Model):
         return str(self.pendingID)
 
 
+class ZarinPalPending(models.Model):
+
+    """
+    ZarinPal portal pending model for store pending data
+
+    column name :
+
+        1. paymentID
+        2. customer_email
+        3. description
+        4. status
+
+    relation :
+
+        1. OneToOne with pending
+
+    """
+
+    # paymentID
+    pendingID = models.IntegerField()
+
+    # customer email
+    customer_email = models.EmailField()
+
+    # transaction description that is str of product_hashcode
+    description = models.CharField(max_length=150)
+
+    # relation
+    pending = models.OneToOneField(Pending, on_delete=models.PROTECT)
+
+    # first layer connection status
+    status = models.CharField(max_length=50)
+
+    def __str__(self):
+        return str(self.pendingID)
+
+
 class Payment(models.Model):
 
     """
@@ -558,7 +595,7 @@ class Payment(models.Model):
         1. status
         2. payment time
         3. amount
-        4. traceNO
+        4. traceNum
         5. paymentID
 
     relation :
@@ -577,11 +614,11 @@ class Payment(models.Model):
     # amount
     amount = models.IntegerField()
 
-    # traceNO == code rahgiri
-    traceNO = models.CharField(max_length=50)
+    # traceNum == code rahgiri
+    traceNum = models.IntegerField()
 
     # payment id that we had build when create pending object
-    paymentID = models.CharField(max_length=50)
+    paymentID = models.IntegerField()
 
     # relation
     factor = models.OneToOneField(Factor, on_delete=models.PROTECT)
@@ -683,4 +720,43 @@ class PasargadPayment(models.Model):
     pasargad_pending = models.OneToOneField(PasargadPending, on_delete=models.PROTECT)
 
     def __str__(self):
-        return self.PaymentID
+        return str(self.PaymentID)
+
+
+class ZarinPalPayment(models.Model):
+
+    """
+    ZarinPal payment database for store payment record
+
+    column name:
+
+        1. paymentID
+        2. product_hashcode
+        3. result_status
+        4. authority
+
+    relation:
+
+        1. OneToOne with payment
+        2. OneToOne with ZarinPalPayment
+
+    """
+
+    # payment id that equal factor id and pending id
+    paymentID = models.IntegerField()
+
+    # product hashcode
+    product_hashcode = models.CharField(max_length=150)
+
+    # this is verification status
+    result_status = models.IntegerField()
+
+    # authority
+    authority = models.CharField(max_length=150)
+
+    # relation
+    payment = models.OneToOneField(Payment, on_delete=models.PROTECT)
+    zarinPalPending = models.OneToOneField(ZarinPalPending, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return str(self.paymentID)

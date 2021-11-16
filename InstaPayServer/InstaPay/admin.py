@@ -111,12 +111,23 @@ class PasargadPendingAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(models.ZarinPalPending)
+class ZarinPalPendingAdmin(admin.ModelAdmin):
+
+    fieldsets = (
+
+        ('information', {'fields': ('pendingID', 'customer_email', 'description', 'status')}),
+        ('relation', {'fields': ('pending',)})
+
+    )
+
+
 @admin.register(models.Payment)
 class PaymentAdmin(admin.ModelAdmin):
 
     fieldsets = (
 
-        ('information', {'fields': ('status', 'payment_time', 'amount', 'traceNO', "paymentID")}),
+        ('information', {'fields': ('status', 'payment_time', 'amount', 'traceNum', "paymentID")}),
         ('Relation', {'fields': ('factor', 'pending')}),
 
     )
@@ -141,5 +152,16 @@ class PasargadPaymentAdmin(admin.ModelAdmin):
         ('information', {'fields': ('PaymentID', 'invoiceDate', 'transRefNum', 'traceNum', 'refNum',
                                     'transactionTime', 'result')}),
         ('Relation', {'fields': ('payment', 'pasargad_pending')}),
+
+    )
+
+
+@admin.register(models.ZarinPalPayment)
+class ZarinPalPaymentAdmin(admin.ModelAdmin):
+
+    fieldsets = (
+
+        ('information', {'fields': ('paymentID', 'product_hashcode', 'result_status', 'authority')}),
+        ('Relation', {'fields': ('payment', 'zarinPalPending')}),
 
     )

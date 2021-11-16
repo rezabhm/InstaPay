@@ -1,7 +1,7 @@
 import random
 import time
 
-from django.shortcuts import HttpResponse, HttpResponseRedirect
+from django.shortcuts import HttpResponse, HttpResponseRedirect, redirect
 from django.urls import reverse
 from django.template import loader, Context
 from django.views.decorators.csrf import csrf_exempt
@@ -15,6 +15,7 @@ from hashlib import sha1
 from Crypto.Signature import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 import base64
+from zeep import Client
 
 # views code ...
 
@@ -1973,7 +1974,6 @@ def create_factor(requests, product_hashcode):
 
                 }
 
-
                 cur_time = time.ctime(time.time()).split(' ')
                 cur_year = cur_time[-1]
                 cur_month = month_dict[cur_time[1]]
@@ -2011,7 +2011,7 @@ def create_factor(requests, product_hashcode):
 
                 )
 
-                sign_data = sha1(x).hexdigest()
+                sign_data = sha1(x)
 
                 # import private key
                 with open('privateKey.txt', 'r') as fd:
@@ -2049,6 +2049,80 @@ def create_factor(requests, product_hashcode):
                 }
 
                 return HttpResponse(factor_temp.render(context))
+
+            elif bank == 'zarinPal':
+
+                # start ZarinPal portal process
+
+                # create pending object
+                pending_obj = models.Pending()
+
+                # set param
+                pending_obj.amount = price * number_of_product
+                pending_obj.cellNUM = str(phone_number)
+                pending_obj.merchantID = Information.zarinPal_merchantCode
+                pending_obj.bank = bank
+                pending_obj.pendingID = factor_obj.factor_id
+                pending_obj.redirect_url = Information.domain + str(product_hashcode) + '/' + \
+                                           str(factor_obj.factor_id) + "/Verify/zarinPal/"
+
+                # relation
+                pending_obj.factor = factor_obj
+
+                # save pending objects
+                pending_obj.save()
+
+                """ start session """
+                client = Client(Information.ZARINPAL_WEBSERVICE)
+
+                # start first layer connection
+                result = client.service.PaymentRequest(
+
+                    Information.zarinPal_merchantCode,
+                    number_of_product * price,
+                    str(product_hashcode)+"@"+str(factor_obj.factor_id),
+                    customer_obj.customer_email,
+                    customer_obj.phone_number,
+                    Information.domain + str(product_hashcode) + '/' + str(factor_obj.factor_id) + "/Verify/zarinPal/"
+
+                )
+
+                if result.Status == 100:
+
+                    # create zarinPal pending
+                    zarinpal_pending_obj = models.ZarinPalPending()
+
+                    zarinpal_pending_obj.pendingID = factor_obj.factor_id
+                    zarinpal_pending_obj.customer_email = customer_obj.customer_email
+                    zarinpal_pending_obj.description = str(product_hashcode)+"@"+str(factor_obj.factor_id)
+                    zarinpal_pending_obj.status = result.Status
+
+                    # relation
+                    zarinpal_pending_obj.pendingID = pending_obj
+
+                    # save object
+                    zarinpal_pending_obj.save()
+
+                    return redirect('https://www.zarinpal.com/pg/StartPay/' + result.Authority)
+
+                else:
+
+                    # create zarinPal pending
+                    zarinpal_pending_obj = models.ZarinPalPending()
+
+                    zarinpal_pending_obj.pendingID = factor_obj.factor_id
+                    zarinpal_pending_obj.customer_email = customer_obj.customer_email
+                    zarinpal_pending_obj.description = str(product_hashcode)+"@"+str(factor_obj.factor_id)
+                    zarinpal_pending_obj.status = result.Status
+
+                    # relation
+                    zarinpal_pending_obj.pendingID = pending_obj
+
+                    # save object
+                    zarinpal_pending_obj.save()
+
+                    # redirect to product_hashcode
+                    return HttpResponseRedirect(reverse('Product_Buy'))
 
 
 def bank_url(requests):
