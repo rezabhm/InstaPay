@@ -47,6 +47,7 @@
 
     get customer information <br>
       <form action="{% url 'Create_Factor' product_hashcode=prod.product_hashcode %}" method="post">
+        {% csrf_token %}
 
         <input type="hidden" value="{{ prod.product_hashcode }}" name="product_hashcode" >
         <input type="hidden" value="{{ off_price }}" name="price" >
@@ -84,10 +85,6 @@
         </tr>
 
 
-        <tr>
-          <td>address</td>
-          <td><input type="text" name="address"></td>
-        </tr>
 
         <tr>
           <td> number of product</td>
@@ -98,6 +95,7 @@
           <td>bank</td>
           <td><label for="saman" >saman</label><input type="radio" id="saman" name="bank" value="saman"></td>
           <td><label for="pasargad" >pasargad</label><input type="radio" id="pasargad" name="bank" value="pasargad"></td>
+          <td><label for="zarinpal" >zarinpal</label><input type="radio" id="zarinpal" name="bank" value="zarinpal"></td>
         </tr>
 
         <tr>

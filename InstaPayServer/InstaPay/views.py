@@ -1769,7 +1769,7 @@ def product_buy(requests, product_hashcode):
 
         return HttpResponse(product_temp.render(context))
 
-
+@csrf_exempt
 def create_factor(requests, product_hashcode):
 
     """
@@ -1789,14 +1789,14 @@ def create_factor(requests, product_hashcode):
         # get post data
 
         product_hashcode = requests.POST['product_hashcode']
-        price = requests.POST['price']
+        price = int(float(requests.POST['price']))
         name = requests.POST['name']
         lastname = requests.POST['lastname']
         phone_number = requests.POST['phone_number']
         postal_code = requests.POST['postal_code']
         bank = requests.POST['bank']
         address = requests.POST['address']
-        number_of_product = models.POST['number_of_product']
+        number_of_product = int(requests.POST['number_of_product'])
 
         try:
             email_field = requests.POST['email']
@@ -1804,9 +1804,9 @@ def create_factor(requests, product_hashcode):
             email_field = None
 
         # get product object
-        product_obj = models.Product.objects.get(product_hashcode=product_hashcode)
+        product_obj = models.Product.objects.all().filter(product_hashcode=product_hashcode)[0]
 
-        if product_obj.number_of_product - number_of_product < 0:
+        if int(product_obj.number) - int(number_of_product) < 0:
 
             # you cant buy anything
             # redirect to product_hashcode
@@ -1834,23 +1834,26 @@ def create_factor(requests, product_hashcode):
             else:
 
                 # create object
+                #print(str(phone_number))
+                #customer_obj = product_obj.customer_set.create(phone_number=str(phone_number))
+
                 customer_obj = models.Customer(phone_number=phone_number)
 
                 customer_obj.name = name
                 customer_obj.last_name = lastname
                 customer_obj.customer_email = email_field
                 customer_obj.address = address
-                customer_obj.product = product_obj
                 customer_obj.bloger = bloger_obj
                 customer_obj.postal_code = postal_code
 
                 # save object
                 customer_obj.save()
+                customer_obj.product.add(product_obj)
 
             # create factor objects
             factor_obj = models.Factor()
-            factor_obj.price = price
-            factor_obj.number_of_product = number_of_product
+            factor_obj.price = int(float(price))
+            factor_obj.number_of_product = int(number_of_product)
             factor_obj.bloger_payment_bank = bank
 
             factor_obj.bloger = bloger_obj
@@ -2011,10 +2014,12 @@ def create_factor(requests, product_hashcode):
 
                 )
 
-                sign_data = sha1(x)
+                sign_data = sha1(x.encode())
 
+                import os
+                print(os.listdir('InstaPay'))
                 # import private key
-                with open('privateKey.txt', 'r') as fd:
+                with open('InstaPay/privateKey', 'r') as fd:
                     private_key = RSA.importKey(fd.read())
 
                 signer = PKCS1_v1_5.new(private_key)
@@ -2124,7 +2129,7 @@ def create_factor(requests, product_hashcode):
                     # redirect to product_hashcode
                     return HttpResponseRedirect(reverse('Product_Buy'))
 
-
+@csrf_exempt
 def bank_url(requests):
 
     """
@@ -2177,3 +2182,7 @@ def verify_factor_pasargad(requests, product_hashcode):
 
 def verify_factor_saman(requests, product_hashcode):
     return HttpResponse("verify product" + str(product_hashcode))
+
+
+def verify_factor_zarinpal(requests):
+    return HttpResponse('verify zarinpal')

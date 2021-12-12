@@ -48,7 +48,7 @@ Factor<br>
 
       {% if saman_state %}
 
-        <form method="post" action="{% urls 'Bank_Url' %}">
+        <form method="post" action="{% url 'Bank_Url' %}">
 
           <input type="hidden" name="bank" value="{{ pending.bank }}">
           <input type="hidden" name="Amount" value="{{ final_price }}">
@@ -63,7 +63,7 @@ Factor<br>
 
       {% else %}
 
-        <form method="post" action="{% urls 'Bank_Url' %}">
+        <form method="post" action="{% url 'Bank_Url' %}">
 
           <input type="hidden" name="bank" value="{{ pending.bank }}">
           <input type="hidden" name="merchantCode" value="{{ pending.merchantID }}">

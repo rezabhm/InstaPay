@@ -247,7 +247,9 @@ class Customer(models.Model):
     """
 
     # customer phone number
-    phone_number = models.CharField(max_length=12, help_text="09121234567")
+    phone_number = models.CharField(max_length=25, help_text="09121234567")
+
+    id = models.CharField(default=uuid1().int, max_length=250,primary_key=True)
 
     # address
     address = models.TextField()
@@ -266,7 +268,7 @@ class Customer(models.Model):
 
     # relation
     bloger = models.ForeignKey(Bloger, on_delete=models.CASCADE)
-    product = models.ManyToManyField(Product, default=None)
+    product = models.ManyToManyField(Product)
 
     def __str__(self):
         return str(self.phone_number)
@@ -352,7 +354,7 @@ class Factor(models.Model):
     """
 
     # factor id
-    factor_id = models.IntegerField(default=uuid1().int)
+    factor_id = models.IntegerField(default=int(str(uuid1().int)[:10]))
 
     # create factor time
     create_time = models.FloatField(default=time.time())
